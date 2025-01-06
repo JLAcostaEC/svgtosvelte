@@ -15,13 +15,13 @@
 To install the package, use the following command:
 
 ```sh
-npm install -D svgtosvelte
+npm install -D @jlacostaec/svgtosvelte
 ```
 ```sh
-pnpm add -D svgtosvelte
+pnpm add -D @jlacostaec/svgtosvelte
 ```
 ```sh
-yarn add -D svgtosvelte
+yarn add -D @jlacostaec/svgtosvelte
 ```
 
 ## Usage
