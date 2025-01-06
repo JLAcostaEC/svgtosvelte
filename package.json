@@ -4,7 +4,9 @@
   "description": "The Best Way to Convert SVG to Svelte 5 Components",
   "main": "./dist/src/index.js",
   "type": "module",
-  "bin": "./dist/bin.js",
+  "bin": {
+    "svgtosvelte": "./dist/bin.js"
+  },
   "scripts": {
     "dev": "tsc -w",
     "build": "tsc"
