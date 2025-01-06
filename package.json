@@ -1,0 +1,43 @@
+{
+  "name": "@jlacostaec/svgtosvelte",
+  "version": "1.0.0",
+  "description": "The Best Way to Convert SVG to Svelte 5 Components",
+  "main": "./dist/src/index.js",
+  "type": "module",
+  "bin": "./dist/bin.js",
+  "scripts": {
+    "dev": "tsc -w",
+    "build": "tsc"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "default": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    }
+  },
+  "keywords": [
+    "svelte",
+    "svg",
+    "svgtosvelte",
+    "CLI",
+    "convert"
+  ],
+  "author": {
+    "name": "Jorge Acosta",
+    "url": "https://github.com/JLAcostaEC"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.4",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "commander": "^13.0.0",
+    "estree-walker": "^3.0.3",
+    "svelte": "^5.16.1"
+  }
+}
