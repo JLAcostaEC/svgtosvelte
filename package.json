@@ -1,6 +1,6 @@
 {
   "name": "@jlacostaec/svgtosvelte",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "The Best Way to Convert SVG to Svelte 5 Components",
   "main": "./dist/src/index.js",
   "type": "module",
