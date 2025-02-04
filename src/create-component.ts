@@ -2,7 +2,7 @@ import { parse } from 'svelte/compiler';
 import { walk } from 'estree-walker';
 import { parseAttribute } from './utils.js';
 
-export function createComponentWithAst(source: string, filename: string, useTypeScript: boolean) {
+export function createComponentWithAst(source: string, filename: string, useTypeScript: boolean, updatefwh: boolean) {
   const ast = parse(source, { filename, modern: true });
   let svgAttributes = '';
   let svgChildren = '';
@@ -10,9 +10,9 @@ export function createComponentWithAst(source: string, filename: string, useType
   walk(ast, {
     enter(node, parent) {
       if (node.type === 'Attribute') {
-        if (parent.name === 'svg') return svgAttributes += parseAttribute(node);
+        if (parent.name === 'svg') return svgAttributes += parseAttribute(node, updatefwh);
 
-        svgChildren += parseAttribute(node);
+        svgChildren += parseAttribute(node, updatefwh);
       }
 
       if (node.type === 'RegularElement' && node.name !== 'svg') {

@@ -14,13 +14,15 @@ program
   .option('-s, --suffix <suffix>', 'Add a suffix to component names', '')
   .option('-c, --casing <casing>', 'Set Casing to component names', 'PascalCase')
   .option('-t, --typescript', 'Use TypeScript in generated components', false)
+  .option('-u, --updatefwh', 'Update Fill to (currentColor), Width to (100%) and height to (auto)', false)
   .action((source, destination, options) => {
     try {
       convertSvgsToSvelte(source, destination, {
         prefix: options.prefix,
         suffix: options.suffix,
         casing: options.casing,
-        useTypeScript: options.typescript
+        useTypeScript: options.typescript,
+        updatefwh: options.updatefwh
       });
       console.log('SVG conversion completed successfully!');
     } catch (error) {

@@ -2,12 +2,18 @@ import type { AST } from "svelte/compiler";
 
 export type CasingFormat = 'camelCase' | 'PascalCase' | 'snake_case' | 'kebab-case';
 
-export function parseAttribute(attribute: AST.Attribute) {
-  if (attribute.name === 'fill' || attribute.name === 'stroke') {
-    return `${attribute.name}="currentColor" `;
+export function parseAttribute(
+  attribute: AST.Attribute,
+  /** Whether to update fill, width, and height attributes to make the SVG responsive and inherit the current color */
+  updatefwh = false
+) {
+  if (updatefwh) {
+    if (attribute.name === 'fill' || attribute.name === 'stroke') {
+      return `${attribute.name}="currentColor" `;
+    }
+    if (attribute.name === 'width') return `width="100%" `;
+    if (attribute.name === 'height') return `height="auto" `;
   }
-  if (attribute.name === 'width') return `width="100%" `;
-  if (attribute.name === 'height') return `height="auto" `;
 
   return `${attribute.name}="${attribute.value[0].data}" `;
 }

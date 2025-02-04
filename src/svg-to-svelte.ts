@@ -6,7 +6,7 @@ import { createComponentWithAst } from './create-component.js';
 export function convertSvgsToSvelte(
   sourceDir: string,
   destDir: string,
-  options: { prefix: string, suffix: string, casing: CasingFormat, useTypeScript: boolean }
+  options: { prefix: string, suffix: string, casing: CasingFormat, useTypeScript: boolean, updatefwh: boolean }
 ) {
   if (!fs.existsSync(sourceDir)) {
     console.error(`Source directory "${sourceDir}" does not exist.`);
@@ -26,7 +26,7 @@ export function convertSvgsToSvelte(
     return;
   }
 
-  let { prefix, suffix, casing, useTypeScript } = options;
+  let { prefix, suffix, casing, useTypeScript, updatefwh } = options;
   const reexports: string[] = [];
 
 
@@ -46,7 +46,8 @@ export function convertSvgsToSvelte(
     const svelteComponent = createComponentWithAst(
       svgContent,
       file,
-      useTypeScript
+      useTypeScript,
+      updatefwh
     );
 
     const svelteFilename = `${componentFileName}.svelte`;
