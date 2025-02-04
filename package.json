@@ -10,17 +10,18 @@
   "scripts": {
     "dev": "tsc -w",
     "build": "tsc",
-    "test": "vitest",
+    "test": "vitest run",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "prepack": "publint"
   },
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
-      "default": "./dist/src/index.js",
-      "types": "./dist/src/index.d.ts"
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
     }
   },
   "keywords": [
@@ -42,6 +43,7 @@
     "eslint": "^9.19.0",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
+    "publint": "^0.3.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.23.0",
     "vitest": "^3.0.5"
