@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { describe, it, expect, afterAll } from 'vitest';
-import { convertSvgsToSvelte } from '../src/index';
-import { svelteJsTemplate, svelteTsTemplate } from '../src/utils';
+import { convertSvgsToSvelte } from '../src/index.js';
+import { svelteJsTemplate, svelteTsTemplate } from '../src/utils.js';
 
 describe('SVGToSvelteJS', async () => {
   afterAll(() => {
