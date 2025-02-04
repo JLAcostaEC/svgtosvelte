@@ -14,5 +14,5 @@
     "allowJs": true,
     "declaration": true
   },
-  "include": ["src/*", "bin.ts"]
+  "include": ["src/*", "bin.ts", "test/svgtosvelte.spec.ts"]
 }

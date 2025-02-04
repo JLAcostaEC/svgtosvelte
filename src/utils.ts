@@ -1,4 +1,4 @@
-import type { AST } from "svelte/compiler";
+import type { AST } from 'svelte/compiler';
 
 export type CasingFormat = 'camelCase' | 'PascalCase' | 'snake_case' | 'kebab-case';
 
@@ -21,22 +21,16 @@ export function parseAttribute(
 export function convertCasing(text: string, format: CasingFormat) {
   const words = text
     .replace(/([a-z])([A-Z])/g, '$1 $2') // Split camelCase/PascalCase text
-    .replace(/[^a-zA-Z0-9]+/g, ' ')      // Replace non-alphanumeric characters with spaces
-    .trim()                              // Remove leading/trailing spaces
+    .replace(/[^a-zA-Z0-9]+/g, ' ') // Replace non-alphanumeric characters with spaces
+    .trim() // Remove leading/trailing spaces
     .toLowerCase()
     .split(/\s+/);
 
   switch (format) {
     case 'camelCase':
-      return words
-        .map((word, index) =>
-          index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)
-        )
-        .join('');
+      return words.map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1))).join('');
     case 'PascalCase':
-      return words
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join('');
+      return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('');
     case 'snake_case':
       return words.join('_');
     case 'kebab-case':
@@ -46,6 +40,6 @@ export function convertCasing(text: string, format: CasingFormat) {
   }
 }
 
-export const svelteTsTemplate = `<script lang="ts">import type { SVGAttributes } from 'svelte/elements';let { children, ...attributes }: SVGAttributes<SVGElement> = $props();</script>`
+export const svelteTsTemplate = `<script lang="ts">import type { SVGAttributes } from 'svelte/elements';let { children, ...attributes }: SVGAttributes<SVGElement> = $props();</script>`;
 
-export const svelteJsTemplate = `<script>let { children, ...attributes } = $$props;</script>`
+export const svelteJsTemplate = `<script>let { children, ...attributes } = $$props;</script>`;

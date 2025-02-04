@@ -9,7 +9,10 @@
   },
   "scripts": {
     "dev": "tsc -w",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "vitest",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write ."
   },
   "files": [
     "dist"
@@ -33,9 +36,15 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@eslint/compat": "^1.2.6",
+    "@eslint/js": "^9.19.0",
     "@types/node": "^22.10.4",
+    "eslint": "^9.19.0",
+    "globals": "^15.14.0",
     "prettier": "^3.4.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.23.0",
+    "vitest": "^3.0.5"
   },
   "dependencies": {
     "commander": "^13.0.0",

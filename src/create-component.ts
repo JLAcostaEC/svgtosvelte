@@ -10,7 +10,7 @@ export function createComponentWithAst(source: string, filename: string, useType
   walk(ast, {
     enter(node, parent) {
       if (node.type === 'Attribute') {
-        if (parent.name === 'svg') return svgAttributes += parseAttribute(node, updatefwh);
+        if (parent.name === 'svg') return (svgAttributes += parseAttribute(node, updatefwh));
 
         svgChildren += parseAttribute(node, updatefwh);
       }
@@ -20,15 +20,20 @@ export function createComponentWithAst(source: string, filename: string, useType
       }
     },
     leave(node, parent, prop, index) {
-      if (node.type === 'Attribute' && parent.name !== 'svg' && typeof index === 'number' && parent.attributes.length === index + 1) {
+      if (
+        node.type === 'Attribute' &&
+        parent.name !== 'svg' &&
+        typeof index === 'number' &&
+        parent.attributes.length === index + 1
+      ) {
         svgChildren = svgChildren.trim();
         svgChildren += `>`;
         return;
       }
-      if (node.type === 'RegularElement' && node.name !== 'svg') return svgChildren += `</${node.name}>`;
+      if (node.type === 'RegularElement' && node.name !== 'svg') return (svgChildren += `</${node.name}>`);
 
-      if (node.type === 'Text' && parent.type === 'RegularElement') return svgChildren += node.data + ' ';
-    },
+      if (node.type === 'Text' && parent.type === 'RegularElement') return (svgChildren += node.data + ' ');
+    }
   });
 
   return `${useTypeScript ? svelteTsTemplate : svelteJsTemplate}<svg ${svgAttributes.trim()} {...attributes}>${svgChildren.trim()}{@render children?.()}</svg>`;

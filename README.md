@@ -17,9 +17,11 @@ To install the package, use the following command:
 ```sh
 npm install -D @jlacostaec/svgtosvelte
 ```
+
 ```sh
 pnpm add -D @jlacostaec/svgtosvelte
 ```
+
 ```sh
 yarn add -D @jlacostaec/svgtosvelte
 ```
@@ -35,7 +37,8 @@ svgtosvelte <source> [destination] [options]
 - `<source>`: Source directory containing SVG files.
 - `[destination]`: Destination directory for Svelte components (default: src/lib).
 
-### Options 
+### Options
+
 - `-p, --prefix <prefix>`: Add a prefix to component names (default: '').
 - `-s, --suffix <suffix>`: Add a suffix to component names (default: '').
 - `-c, --casing <casing>`: Set casing for component names (default: PascalCase).
@@ -61,7 +64,6 @@ Convert SVG files with camelCase naming and TypeScript:
 svgtosvelte icons src/lib -c camelCase -t
 ```
 
-
 ## API
 
 You can also use the package programmatically:
@@ -79,14 +81,17 @@ convertSvgToSvelte(source: string, outDir: string, options: { prefix: string, su
 - `option.casing: string`: Convert all components name to the given casing. (PascalCase, camelCase, kebab-case, snake_case)
 - `option.useTypeScript: boolean`: Whether to use TS for file types or not.
 
-
 ### Example
 
 ```javascript
-import { convertSvgToSvelte } from "svgtosvelte"
+import { convertSvgToSvelte } from 'svgtosvelte';
 
-convertSvgToSvelte('src/assets/', 'src/lib/', {prefix: 'Svg2Svelte', suffix: 'byAuthor', casing: 'PascalCase', useTypeScript: true});
-
+convertSvgToSvelte('src/assets/', 'src/lib/', {
+  prefix: 'Svg2Svelte',
+  suffix: 'byAuthor',
+  casing: 'PascalCase',
+  useTypeScript: true
+});
 ```
 
 ## License
