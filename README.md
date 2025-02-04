@@ -43,6 +43,7 @@ svgtosvelte <source> [destination] [options]
 - `-s, --suffix <suffix>`: Add a suffix to component names (default: '').
 - `-c, --casing <casing>`: Set casing for component names (default: PascalCase).
 - `-t, --typescript`: Use TypeScript in generated components (default: false).
+- `-u, --updatefwh`: Update Fill to (currentColor), Width to (100%) and height to (auto) (default: false)
 
 ## Examples:
 
@@ -80,6 +81,7 @@ convertSvgToSvelte(source: string, outDir: string, options: { prefix: string, su
 - `option.suffix: string`: The name appended to the end of each component name.
 - `option.casing: string`: Convert all components name to the given casing. (PascalCase, camelCase, kebab-case, snake_case)
 - `option.useTypeScript: boolean`: Whether to use TS for file types or not.
+- `option.updatefwh: boolean`: Update Fill to (currentColor), Width to (100%) and height to (auto)
 
 ### Example
 
@@ -90,7 +92,8 @@ convertSvgToSvelte('src/assets/', 'src/lib/', {
   prefix: 'Svg2Svelte',
   suffix: 'byAuthor',
   casing: 'PascalCase',
-  useTypeScript: true
+  useTypeScript: true,
+  updatefwh: false
 });
 ```
 
