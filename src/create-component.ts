@@ -1,6 +1,6 @@
 import { parse } from 'svelte/compiler';
 import { walk } from 'estree-walker';
-import { parseAttribute } from './utils.js';
+import { parseAttribute, svelteJsTemplate, svelteTsTemplate } from './utils.js';
 
 export function createComponentWithAst(source: string, filename: string, useTypeScript: boolean, updatefwh: boolean) {
   const ast = parse(source, { filename, modern: true });
@@ -31,9 +31,5 @@ export function createComponentWithAst(source: string, filename: string, useType
     },
   });
 
-  const typeDefs = useTypeScript
-    ? `<script lang="ts">import type { SVGAttributes } from 'svelte/elements';let { children, ...attributes }: SVGAttributes<SVGElement> = $props();`
-    : `<script>let { children, ...attributes } = $props();`;
-
-  return `${typeDefs}</script><svg ${svgAttributes.trim()} {...attributes}>${svgChildren.trim()}{@render children?.()}</svg>`;
+  return `${useTypeScript ? svelteTsTemplate : svelteJsTemplate}<svg ${svgAttributes.trim()} {...attributes}>${svgChildren.trim()}{@render children?.()}</svg>`;
 }

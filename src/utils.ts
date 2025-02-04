@@ -45,3 +45,7 @@ export function convertCasing(text: string, format: CasingFormat) {
       throw new Error(`Unknow casing format: ${format}`);
   }
 }
+
+export const svelteTsTemplate = `<script lang="ts">import type { SVGAttributes } from 'svelte/elements';let { children, ...attributes }: SVGAttributes<SVGElement> = $props();</script>`
+
+export const svelteJsTemplate = `<script>let { children, ...attributes } = $$props;</script>`
