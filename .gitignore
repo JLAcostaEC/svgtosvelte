@@ -1,4 +1,6 @@
 test-results
+/test/js
+/test/ts
 node_modules
 
 # Output
