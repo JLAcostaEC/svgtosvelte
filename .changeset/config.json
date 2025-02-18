@@ -1,10 +1,10 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.3.0/schema.json",
-  "changelog": [ "@svitejs/changesets-changelog-github-compact", { "repo": "JLAcostaEC/svgtosvelte" } ],
+  "changelog": ["@svitejs/changesets-changelog-github-compact", { "repo": "JLAcostaEC/svgtosvelte" }],
   "commit": false,
   "fixed": [],
   "linked": [],
-  "access": "restricted",
+  "access": "public",
   "baseBranch": "main",
   "ignore": []
 }

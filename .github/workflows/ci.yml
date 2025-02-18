@@ -34,7 +34,7 @@ jobs:
 
       - name: Test
         run: pnpm test
-        
+
   Lint:
     if: github.repository == 'JLAcostaEC/svgtosvelte'
     runs-on: ubuntu-latest
