@@ -9,11 +9,12 @@
   },
   "scripts": {
     "dev": "tsc -w",
-    "build": "tsc",
-    "test": "vitest run",
+    "build": "tsc && publint",
+    "test": "vitest run --test-timeout=10000",
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
-    "prepack": "publint"
+    "changeset:version": "changeset version && git add --all",
+    "changeset:publish": "changeset publish"
   },
   "files": [
     "dist"
@@ -37,10 +38,13 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@changesets/cli": "^2.28.0",
     "@eslint/compat": "^1.2.6",
     "@eslint/js": "^9.19.0",
+    "@svitejs/changesets-changelog-github-compact": "^1.2.0",
     "@types/node": "^22.10.4",
     "eslint": "^9.19.0",
+    "eslint-config-prettier": "^10.0.1",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
     "publint": "^0.3.2",
@@ -51,6 +55,7 @@
   "dependencies": {
     "commander": "^13.0.0",
     "estree-walker": "^3.0.3",
-    "svelte": "^5.16.1"
+    "svelte": "^5.16.1",
+    "svelte-check": "^4.1.4"
   }
 }
