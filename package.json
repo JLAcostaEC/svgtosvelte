@@ -2,6 +2,10 @@
   "name": "@jlacostaec/svgtosvelte",
   "version": "1.1.0",
   "description": "The Best Way to Convert SVG to Svelte 5 Components",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JLAcostaEC/svgtosvelte"
+  },
   "main": "./dist/src/index.js",
   "type": "module",
   "bin": {
