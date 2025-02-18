@@ -8,7 +8,7 @@ on:
 jobs:
   release:
     # Run only when necessary
-    if: github.repository == 'JLAcostaEC/actions'
+    if: github.repository == 'JLAcostaEC/svgtosvelte'
     permissions:
       contents: write # to create release (changesets/action)
       pull-requests: write # to create pull request (changesets/action)
