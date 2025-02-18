@@ -1,120 +1,129 @@
 import fs from 'node:fs/promises';
 import { describe, it, expect, afterAll } from 'vitest';
 import { convertSvgsToSvelte } from '../src/index.js';
-import { svelteJsTemplate, svelteTsTemplate } from '../src/utils.js';
+import { convertCasing, Options } from '../src/utils.js';
+import { execSync } from 'node:child_process';
 
-describe('SVGToSvelteJS', async () => {
-  afterAll(() => {
-    fs.rm('test\\js', { recursive: true });
-  });
-  const fileCount = (await fs.readdir('./test/icons')).length;
-
-  convertSvgsToSvelte('test/icons', 'test/js', {
+const VARIANTS: Options[] = [
+  // Right now we have ~128 possible combinations to test, I'll only test 4 😉
+  {
+    casing: 'camelCase',
     prefix: 'icon',
     suffix: '',
-    casing: 'kebab-case',
     useTypeScript: false,
-    updatefwh: false
-  });
+    updatefwh: false,
+    filter: [],
+    exclude: ['24', '32'],
+    registry: true
+  },
+  {
+    casing: 'PascalCase',
+    prefix: 'icon',
+    suffix: 'author',
+    useTypeScript: true,
+    updatefwh: true,
+    filter: ['32'],
+    exclude: ['24'],
+    registry: true
+  },
+  {
+    casing: 'snake_case',
+    prefix: 'icon',
+    suffix: 'author',
+    useTypeScript: false,
+    updatefwh: true,
+    filter: ['32'],
+    exclude: ['24'],
+    registry: false
+  },
+  {
+    casing: 'kebab-case',
+    prefix: 'icon',
+    suffix: 'author',
+    useTypeScript: true,
+    updatefwh: false,
+    filter: ['32'],
+    exclude: ['24'],
+    registry: false
+  }
+];
 
-  const outputFiles = await fs.readdir('test/js');
-
-  it(`Should create ${fileCount + 1} files`, async () => {
-    expect(outputFiles.length).toBe(fileCount + 1);
-  });
-
-  it('Should create icon-fluent-add-circle-24-filled.svelte', async () => {
-    expect(outputFiles.includes('icon-fluent-add-circle-24-filled.svelte')).toBe(true);
-  });
-
-  it('Should create icon-fluent-album-add-24-filled.svelte', async () => {
-    expect(outputFiles.includes('icon-fluent-album-add-24-filled.svelte')).toBe(true);
-  });
-
-  it('Should create icon-fluent-alert-urgent-24-filled.svelte', async () => {
-    expect(outputFiles.includes('icon-fluent-alert-urgent-24-filled.svelte')).toBe(true);
-  });
-
-  // Meaby we can use a better way to test this
-  it.each(outputFiles)(`Verifing JS structure for %s`, async (file) => {
-    const content = await fs.readFile(`test/js/${file}`, 'utf8');
-    if (file === 'index.js') {
-      expect(
-        content.includes(
-          "export { default as IconFluentAddCircle24Filled } from './icon-fluent-add-circle-24-filled.svelte';"
-        )
-      ).toBe(true);
-      expect(
-        content.includes(
-          "export { default as IconFluentAlbumAdd24Filled } from './icon-fluent-album-add-24-filled.svelte';"
-        )
-      ).toBe(true);
-      expect(
-        content.includes(
-          "export { default as IconFluentAlertUrgent24Filled } from './icon-fluent-alert-urgent-24-filled.svelte';"
-        )
-      ).toBe(true);
-      return;
-    }
-    expect(content.includes(svelteJsTemplate)).toBe(true);
-    expect(content.endsWith('</svg>')).toBe(true);
-  });
+afterAll(() => {
+  fs.rm(`test/ts`, { recursive: true });
+  fs.rm(`test/js`, { recursive: true });
 });
 
-describe('SVGToSvelteTS', async () => {
-  afterAll(() => {
-    fs.rm('test\\ts', { recursive: true });
-  });
+describe.each(VARIANTS)('SVGToSvelte ($casing - TS: $useTypeScript - Reg: $registry)', async (options) => {
+  const EXTENSION = options.useTypeScript ? 'ts' : 'js';
+  const OUTPUT_DIR = `test/${EXTENSION}/${options.casing.toLocaleLowerCase()}`;
 
-  const fileCount = (await fs.readdir('./test/icons')).length;
+  convertSvgsToSvelte('test/icons', OUTPUT_DIR, options);
 
-  convertSvgsToSvelte('test/icons', 'test/ts', {
-    prefix: 'icon',
-    suffix: '',
-    casing: 'kebab-case',
-    useTypeScript: true,
-    updatefwh: false
-  });
+  const FILES_COUNT = (await fs.readdir('./test/icons')).filter(
+    (item) => !options.filter?.some((f) => item.includes(f))
+  ).length;
+  const TOTAL_FILES = FILES_COUNT + (options.registry ? 2 : 1);
 
-  const files = await fs.readdir('test/ts');
+  const OUTPUT_FILES = await fs.readdir(OUTPUT_DIR).then((files) =>
+    files.map((file) => ({
+      name: file.replace(file.slice(file.lastIndexOf('.')), ''),
+      path: `${OUTPUT_DIR}/${file}`,
+      filename: file
+    }))
+  );
 
-  it(`Should create ${fileCount + 1} files`, async () => {
-    expect(files.length).toBe(fileCount + 1);
-  });
-
-  it('Should create icon-fluent-add-circle-24-filled.svelte', async () => {
-    expect(files.includes('icon-fluent-add-circle-24-filled.svelte')).toBe(true);
-  });
-
-  it('Should create icon-fluent-album-add-24-filled.svelte', async () => {
-    expect(files.includes('icon-fluent-album-add-24-filled.svelte')).toBe(true);
-  });
-
-  it('Should create icon-fluent-alert-urgent-24-filled.svelte', async () => {
-    expect(files.includes('icon-fluent-alert-urgent-24-filled.svelte')).toBe(true);
-  });
-
-  it.each(files)(`Verifing TS structure for %s`, async (file) => {
-    const content = await fs.readFile(`test/ts/${file}`, 'utf8');
-    if (file === 'index.ts') {
-      expect(
-        content.includes(
-          "export { default as IconFluentAddCircle24Filled } from './icon-fluent-add-circle-24-filled.svelte';"
-        )
-      ).toBe(true);
-      expect(
-        content.includes(
-          "export { default as IconFluentAlbumAdd24Filled } from './icon-fluent-album-add-24-filled.svelte';"
-        )
-      ).toBe(true);
-      expect(
-        content.includes(
-          "export { default as IconFluentAlertUrgent24Filled } from './icon-fluent-alert-urgent-24-filled.svelte';"
-        )
-      ).toBe(true);
-      return;
+  const COMPONENTS = OUTPUT_FILES.filter((file, index, arr) => {
+    if (file.filename !== 'index.ts' && file.filename !== 'registry.json') {
+      arr[index].name = convertCasing(
+        file.filename.replace(file.filename.slice(file.filename.lastIndexOf('.')), ''),
+        'PascalCase'
+      );
+      return true;
     }
-    expect(content.includes(svelteTsTemplate)).toBe(true);
-    expect(content.endsWith('</svg>')).toBe(true);
+  });
+  const REEXPORT = OUTPUT_FILES.find((file) => file.filename === 'index.ts');
+  const REGISTRY = OUTPUT_FILES.find((file) => file.filename === 'registry.json');
+
+  it(`Should create ${TOTAL_FILES} files`, async () => {
+    expect(OUTPUT_FILES.length).toBe(TOTAL_FILES);
+  });
+
+  it(`Should create index.${EXTENSION} file`, async () => {
+    expect(OUTPUT_FILES.some((item) => item.filename === `index.${EXTENSION}`)).toBe(true);
+  });
+
+  if (options.registry) {
+    it('Should create registry file', async () => {
+      expect(OUTPUT_FILES.some((item) => item.filename === 'registry.json')).toBe(true);
+    });
+  }
+  if (options.exclude && options.exclude.length > 0) {
+    it('Should exclude values from files names', async () => {
+      expect(OUTPUT_FILES.some((item) => options.exclude!.some((f) => item.filename.includes(f)))).toBe(false);
+    });
+  }
+
+  it('Check if the reexports are valid', async () => {
+    if (!REEXPORT) return false;
+
+    const CONTENT = await fs.readFile(REEXPORT.path, 'utf8');
+
+    let result =
+      COMPONENTS.map((file) => `export { default as ${file.name} } from './${file.filename}';`).join('\n') + '\n';
+
+    if (REGISTRY) {
+      result += `export { default as ${REGISTRY.name} } from './${REGISTRY?.filename}';\n`;
+    }
+
+    expect(CONTENT).toBe(result);
+  });
+
+  it('Run Svelte Check', async () => {
+    try {
+      const output = execSync('pnpm svelte-check --workspace test/');
+      expect(output.toString()).toContain('svelte-check found 0 errors and 0 warnings');
+    } catch (e) {
+      console.log(e.stdout.toString());
+    }
   });
 });
