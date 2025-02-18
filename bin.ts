@@ -15,6 +15,9 @@ program
   .option('-c, --casing <casing>', 'Set Casing to component names', 'PascalCase')
   .option('-t, --typescript', 'Use TypeScript in generated components', false)
   .option('-u, --updatefwh', 'Update Fill to (currentColor), Width to (100%) and height to (auto)', false)
+  .option('-f, --filter [words...]', 'Filter icons with specific words out of selection', [])
+  .option('-e, --exclude [words...]', 'Exclude specific words from the icon/component name', [])
+  .option('-r, --registry', 'Create a JSON object detailing each component info', false)
   .action((source, destination, options) => {
     try {
       convertSvgsToSvelte(source, destination, {
@@ -22,7 +25,10 @@ program
         suffix: options.suffix,
         casing: options.casing,
         useTypeScript: options.typescript,
-        updatefwh: options.updatefwh
+        updatefwh: options.updatefwh,
+        filter: options.filter,
+        exclude: options.exclude,
+        registry: options.registry
       });
       console.log('SVG conversion completed successfully!');
     } catch (error) {
