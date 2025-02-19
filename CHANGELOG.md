@@ -1,5 +1,11 @@
 # @jlacostaec/svgtosvelte
 
+## 1.1.2
+
+### Patch Changes
+
+- fix: check if registry file already exist to append the content instead of overwrite it ([`a485f51`](https://github.com/JLAcostaEC/svgtosvelte/commit/a485f51b33fdf3ff1f9a674efa74749177c50a7e))
+
 ## 1.1.1
 
 ### Patch Changes
