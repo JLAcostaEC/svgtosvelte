@@ -82,10 +82,18 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
 
   if (registry) {
     const registryDataPath = path.join(destDir, 'registry.json');
+
+    if (fs.existsSync(indexFilePath)) {
+      const existingRegistryData = JSON.parse(fs.readFileSync(registryDataPath, 'utf8'));
+      registryData.push(...existingRegistryData);
+    }
+
     fs.writeFileSync(registryDataPath, JSON.stringify(registryData, null, 2), 'utf8');
     console.log(`Created registry file: ${registryDataPath}`);
 
-    reexports.push(`export { default as registry } from './registry.json';`);
+    if (!existingIndexContent.includes("export { default as registry } from './registry.json';")) {
+      reexports.push(`export { default as registry } from './registry.json';`);
+    }
   }
 
   const finalIndexContent = [existingIndexContent.trim(), ...reexports].filter(Boolean).join('\n') + '\n';

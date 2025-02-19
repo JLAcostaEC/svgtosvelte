@@ -120,7 +120,7 @@ describe.each(VARIANTS)('SVGToSvelte ($casing - TS: $useTypeScript - Reg: $regis
 
   it('Run Svelte Check', async () => {
     try {
-      const output = execSync('pnpm svelte-check --workspace test/');
+      const output = execSync(`pnpm svelte-check --workspace ${OUTPUT_DIR}`);
       expect(output.toString()).toContain('svelte-check found 0 errors and 0 warnings');
     } catch (e) {
       console.log(e.stdout.toString());
