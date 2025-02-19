@@ -54,6 +54,7 @@ export function createComponentWithAst(source: string, filename: string, useType
       }
 
       if (node.type === 'RegularElement') {
+        if (node.name === 'svg') content += '{@render children?.()}';
         content += `</${node.name}>`;
         return;
       }
