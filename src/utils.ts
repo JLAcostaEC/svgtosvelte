@@ -11,6 +11,7 @@ export type Options = {
   filter?: string[];
   exclude?: string[];
   registry?: boolean;
+  kit?: boolean;
 };
 
 export function parseAttribute(

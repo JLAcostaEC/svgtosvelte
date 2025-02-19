@@ -48,6 +48,7 @@ svgtosvelte <source> [destination] [options]
 - `-f, --filter`: Filter icons with specific words out of selection (default: [])
 - `-e, --exclude`: Exclude specific words from the icon/component name (default: [])
 - `-r, --registry`: Create a JSON object detailing each component info (default: false)
+- `-k, --kit`: Tell the CLI that you’re using SvelteKit, which will prevent errors caused by using the word “server” in `src/lib`.
 
 ## Examples:
 
@@ -91,6 +92,7 @@ convertSvgsToSvelte(source: string, outDir: string, options: Options): void
 - `option.filter: string[]`: Filter icons with specific words out of selection (default: [])
 - `option.exclude: string[]`: Exclude specific words from the icon/component name (default: [])
 - `option.registry: boolean`: Create a JSON object detailing each component info (default: false)
+- `option.kit: boolean`: Tell the CLI that you’re using SvelteKit, which will prevent errors caused by using the word “server” in `src/lib`.
 
 ### Example
 
@@ -105,15 +107,19 @@ convertSvgsToSvelte('src/path-to-svgs-folder/', 'src/lib/', {
   updatefwh: false,
   filter: [],
   exclude: ['2'],
-  registry: true
+  registry: true,
+  kit: true
 });
 ```
 
 ```
 Output files
 
--> src/lib
+-> src/lib/
     -------------------
+      /icons/
+        IconsWithTheWordSERVER.svelte
+
       Svg2SvelteAlertFillByAuthor.svelte
       ...RestOfIcons.svelte
       registry.json

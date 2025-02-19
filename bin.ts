@@ -18,6 +18,11 @@ program
   .option('-f, --filter [words...]', 'Filter icons with specific words out of selection', [])
   .option('-e, --exclude [words...]', 'Exclude specific words from the icon/component name', [])
   .option('-r, --registry', 'Create a JSON object detailing each component info', false)
+  .option(
+    '-k, --kit',
+    'Tell the CLI that you’re using SvelteKit, which will prevent errors caused by using the word SERVER in src/lib',
+    false
+  )
   .action((source, destination, options) => {
     try {
       convertSvgsToSvelte(source, destination, {
@@ -28,7 +33,8 @@ program
         updatefwh: options.updatefwh,
         filter: options.filter,
         exclude: options.exclude,
-        registry: options.registry
+        registry: options.registry,
+        kit: options.kit
       });
       console.log('SVG conversion completed successfully!');
     } catch (error) {

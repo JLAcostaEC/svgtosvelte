@@ -4,7 +4,7 @@ import { convertCasing, getCleanName, type Options } from './utils.js';
 import { createComponentWithAst } from './create-component.js';
 
 export function convertSvgsToSvelte(sourceDir: string, destDir: string, options: Options) {
-  const { prefix, suffix, casing, useTypeScript, updatefwh, filter, exclude, registry } = options;
+  const { prefix, suffix, casing, useTypeScript, updatefwh, filter, exclude, registry, kit } = options;
 
   if (!fs.existsSync(sourceDir)) {
     console.error(`Source directory "${sourceDir}" does not exist.`);
@@ -54,8 +54,17 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
 
     const svelteComponent = createComponentWithAst(svgContent, file, !!useTypeScript, !!updatefwh);
 
-    const svelteFilename = `${componentFileName}.svelte`;
-    const outputFilePath = path.join(destDir, svelteFilename);
+    let svelteFilename = `${componentFileName}.svelte`;
+    let outputFilePath = path.join(destDir, svelteFilename);
+
+    if (kit && /src\/lib\/?$/.test(destDir) && svelteFilename.includes('server')) {
+      const iconsFolder = path.join(destDir, 'icons');
+      if (!fs.existsSync(iconsFolder)) {
+        fs.mkdirSync(iconsFolder, { recursive: true });
+      }
+      outputFilePath = path.join(iconsFolder, svelteFilename);
+      svelteFilename = 'icons/' + svelteFilename;
+    }
 
     fs.writeFileSync(outputFilePath, svelteComponent, 'utf8');
     console.log(`Created component: ${outputFilePath}`);
