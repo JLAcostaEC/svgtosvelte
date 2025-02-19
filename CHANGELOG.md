@@ -1,5 +1,11 @@
 # @jlacostaec/svgtosvelte
 
+## 1.1.3
+
+### Patch Changes
+
+- fix: add -k option to prevent errors caused by using the word SERVER in src/lib when using SvelteKit ([`4ea0f65`](https://github.com/JLAcostaEC/svgtosvelte/commit/4ea0f65b27ff0198e3e9c50a962c6f9ac6f9e12e))
+
 ## 1.1.2
 
 ### Patch Changes
