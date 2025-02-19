@@ -9,6 +9,7 @@
 - [Options](#options)
 - [Examples](#examples)
 - [License](#license)
+- [Contributing](#contributing)
 
 ## Installation
 
@@ -44,6 +45,9 @@ svgtosvelte <source> [destination] [options]
 - `-c, --casing <casing>`: Set casing for component names (default: PascalCase).
 - `-t, --typescript`: Use TypeScript in generated components (default: false).
 - `-u, --updatefwh`: Update Fill to (currentColor), Width to (100%) and height to (auto) (default: false)
+- `-f, --filter`: Filter icons with specific words out of selection (default: [])
+- `-e, --exclude`: Exclude specific words from the icon/component name (default: [])
+- `-r, --registry`: Create a JSON object detailing each component info (default: false)
 
 ## Examples:
 
@@ -56,13 +60,13 @@ svgtosvelte icons
 Convert SVG files with a prefix and suffix:
 
 ```sh
-svgtosvelte icons src/lib -p Icon -s Component
+svgtosvelte icons -p Icon -s Component
 ```
 
-Convert SVG files with camelCase naming and TypeScript:
+Convert SVG files from a SVG Package to different output folder with camelCase naming and TypeScript:
 
 ```sh
-svgtosvelte icons src/lib -c camelCase -t
+svgtosvelte node_modules/path-to-pkg/icons/ src/utils/icons -c camelCase -t
 ```
 
 ## API
@@ -70,7 +74,9 @@ svgtosvelte icons src/lib -c camelCase -t
 You can also use the package programmatically:
 
 ```ts
-convertSvgToSvelte(source: string, outDir: string, options: { prefix: string, suffix: string, casing: CasingFormat, useTypeScript: boolean }): void
+import { convertSvgsToSvelte } from '@jlacostaec/svgtosvelte';
+
+convertSvgsToSvelte(source: string, outDir: string, options: Options): void
 ```
 
 ### Parameters
@@ -82,19 +88,37 @@ convertSvgToSvelte(source: string, outDir: string, options: { prefix: string, su
 - `option.casing: string`: Convert all components name to the given casing. (PascalCase, camelCase, kebab-case, snake_case)
 - `option.useTypeScript: boolean`: Whether to use TS for file types or not.
 - `option.updatefwh: boolean`: Update Fill to (currentColor), Width to (100%) and height to (auto)
+- `option.filter: string[]`: Filter icons with specific words out of selection (default: [])
+- `option.exclude: string[]`: Exclude specific words from the icon/component name (default: [])
+- `option.registry: boolean`: Create a JSON object detailing each component info (default: false)
 
 ### Example
 
 ```javascript
-import { convertSvgToSvelte } from 'svgtosvelte';
+import { convertSvgsToSvelte } from '@jlacostaec/svgtosvelte';
 
-convertSvgToSvelte('src/assets/', 'src/lib/', {
+convertSvgsToSvelte('src/path-to-svgs-folder/', 'src/lib/', {
   prefix: 'Svg2Svelte',
   suffix: 'byAuthor',
   casing: 'PascalCase',
   useTypeScript: true,
-  updatefwh: false
+  updatefwh: false,
+  filter: [],
+  exclude: ['2'],
+  registry: true
 });
+```
+
+```
+Output files
+
+-> src/lib
+    -------------------
+      Svg2SvelteAlertFillByAuthor.svelte
+      ...RestOfIcons.svelte
+      registry.json
+      index.ts
+    -------------------
 ```
 
 ## License
