@@ -1,5 +1,11 @@
 # @jlacostaec/svgtosvelte
 
+## 1.1.1
+
+### Patch Changes
+
+- fix: include @render children before closing the svg tag ([`0d82593`](https://github.com/JLAcostaEC/svgtosvelte/commit/0d8259350d09f509afc6389111447c90481f7abc))
+
 ## 1.1.0
 
 ### Minor Changes
