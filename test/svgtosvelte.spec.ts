@@ -62,7 +62,7 @@ describe.each(VARIANTS)('SVGToSvelte ($casing - TS: $useTypeScript - Reg: $regis
 
   const TEST_FILES = await fs.readdir('./test/icons');
 
-  const TO_ICON_FOLDER = options.kit && TEST_FILES.some((file) => file.includes('server'));
+  const TO_ICON_FOLDER = options.kit;
 
   const ICON_OUTPUT_PATH = TO_ICON_FOLDER ? `${ROOT_OUTPUT}/icon` : ROOT_OUTPUT;
 

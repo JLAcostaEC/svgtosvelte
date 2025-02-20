@@ -33,7 +33,7 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
   const reexports: string[] = [];
   const registryData: Array<{ initialName: string; cleanName: string; componentName: string; fileDir: string }> = [];
 
-  const toIconsFolder = kit && files.some((file) => file.includes('server'));
+  const toIconsFolder = kit;
 
   if (toIconsFolder && !fs.existsSync(destDir + '/icon')) {
     fs.mkdirSync(destDir + '/icon', { recursive: true });
@@ -61,12 +61,6 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
 
     const svelteFilename = `${toIconsFolder ? 'icon/' : ''}${componentFileName}.svelte`;
     const outputFilePath = path.join(destDir, svelteFilename);
-
-    // if (kit && /src\/lib\/?$/.test(destDir) && svelteFilename.includes('server')) {
-    //   const iconsFolder = path.join(destDir, 'icons');
-    //   outputFilePath = path.join(iconsFolder, svelteFilename);
-    //   svelteFilename = 'icons/' + svelteFilename;
-    // }
 
     fs.writeFileSync(outputFilePath, svelteComponent, 'utf8');
     console.log(`Created component: ${outputFilePath}`);

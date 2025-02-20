@@ -48,7 +48,7 @@ svgtosvelte <source> [destination] [options]
 - `-f, --filter`: Filter icons with specific words out of selection (default: [])
 - `-e, --exclude`: Exclude specific words from the icon/component name (default: [])
 - `-r, --registry`: Create a JSON object detailing each component info (default: false)
-- `-k, --kit`: Tell the CLI that you’re using SvelteKit, which will prevent errors caused by using the word “server” in `src/lib`.
+- `-k, --kit`: Tell the CLI that you’re using SvelteKit, which will prevent errors caused by using the word “server” in `src/lib` by moving all icons to `src/lib/icons` folder.
 
 ## Examples:
 
