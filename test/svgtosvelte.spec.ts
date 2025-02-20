@@ -24,7 +24,8 @@ const VARIANTS: Options[] = [
     updatefwh: true,
     filter: ['32'],
     exclude: ['24'],
-    registry: true
+    registry: true,
+    kit: true
   },
   {
     casing: 'snake_case',
@@ -55,22 +56,40 @@ afterAll(() => {
 
 describe.each(VARIANTS)('SVGToSvelte ($casing - TS: $useTypeScript - Reg: $registry)', async (options) => {
   const EXTENSION = options.useTypeScript ? 'ts' : 'js';
-  const OUTPUT_DIR = `test/${EXTENSION}/${options.casing.toLocaleLowerCase()}`;
+  const ROOT_OUTPUT = `test/${EXTENSION}/${options.casing.toLocaleLowerCase()}`;
 
-  convertSvgsToSvelte('test/icons', OUTPUT_DIR, options);
+  convertSvgsToSvelte('test/icons', ROOT_OUTPUT, options);
 
-  const FILES_COUNT = (await fs.readdir('./test/icons')).filter(
-    (item) => !options.filter?.some((f) => item.includes(f))
-  ).length;
+  const TEST_FILES = await fs.readdir('./test/icons');
+
+  const TO_ICON_FOLDER = options.kit && TEST_FILES.some((file) => file.includes('server'));
+
+  const ICON_OUTPUT_PATH = TO_ICON_FOLDER ? `${ROOT_OUTPUT}/icon` : ROOT_OUTPUT;
+
+  const FILES_COUNT = TEST_FILES.filter((item) => !options.filter?.some((f) => item.includes(f))).length;
+
+  // Include the index file and the registry file if it's enabled
   const TOTAL_FILES = FILES_COUNT + (options.registry ? 2 : 1);
 
-  const OUTPUT_FILES = await fs.readdir(OUTPUT_DIR).then((files) =>
-    files.map((file) => ({
+  const mapFiles = (files: string[], path: string) => {
+    return files.map((file) => ({
       name: file.replace(file.slice(file.lastIndexOf('.')), ''),
-      path: `${OUTPUT_DIR}/${file}`,
+      path: path + '/' + file,
       filename: file
-    }))
-  );
+    }));
+  };
+
+  const OUTPUT_FILES = await fs.readdir(ICON_OUTPUT_PATH).then((files) => mapFiles(files, ICON_OUTPUT_PATH));
+
+  if (TO_ICON_FOLDER) {
+    const EXTRA_FILES = await fs.readdir(`${ROOT_OUTPUT}`).then((files) => {
+      return mapFiles(
+        files.filter((item) => !item.includes('icon')),
+        ROOT_OUTPUT
+      );
+    });
+    OUTPUT_FILES.push(...EXTRA_FILES);
+  }
 
   const COMPONENTS = OUTPUT_FILES.filter((file, index, arr) => {
     if (file.filename !== 'index.ts' && file.filename !== 'registry.json') {
@@ -109,7 +128,9 @@ describe.each(VARIANTS)('SVGToSvelte ($casing - TS: $useTypeScript - Reg: $regis
     const CONTENT = await fs.readFile(REEXPORT.path, 'utf8');
 
     let result =
-      COMPONENTS.map((file) => `export { default as ${file.name} } from './${file.filename}';`).join('\n') + '\n';
+      COMPONENTS.map(
+        (file) => `export { default as ${file.name} } from './${(TO_ICON_FOLDER ? 'icon/' : '') + file.filename}';`
+      ).join('\n') + '\n';
 
     if (REGISTRY) {
       result += `export { default as ${REGISTRY.name} } from './${REGISTRY?.filename}';\n`;
@@ -120,7 +141,7 @@ describe.each(VARIANTS)('SVGToSvelte ($casing - TS: $useTypeScript - Reg: $regis
 
   it('Run Svelte Check', async () => {
     try {
-      const output = execSync(`pnpm svelte-check --workspace ${OUTPUT_DIR}`);
+      const output = execSync(`pnpm svelte-check --workspace ${ROOT_OUTPUT}`);
       expect(output.toString()).toContain('svelte-check found 0 errors and 0 warnings');
     } catch (e) {
       console.log(e.stdout.toString());
