@@ -1,5 +1,11 @@
 # @jlacostaec/svgtosvelte
 
+## 1.1.6
+
+### Patch Changes
+
+- fix: better explanation of `-k` option and cleanup ([`8b8a53f`](https://github.com/JLAcostaEC/svgtosvelte/commit/8b8a53f00e86872c3446785843c06e9f6b498640))
+
 ## 1.1.5
 
 ### Patch Changes
