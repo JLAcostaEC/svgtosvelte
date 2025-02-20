@@ -1,5 +1,11 @@
 # @jlacostaec/svgtosvelte
 
+## 1.1.4
+
+### Patch Changes
+
+- fix: add jsdocs types for SvelteJSTemplate ([`01aed10`](https://github.com/JLAcostaEC/svgtosvelte/commit/01aed105d0f3ac49cb946db37f239d49a834517f))
+
 ## 1.1.3
 
 ### Patch Changes
