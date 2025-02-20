@@ -1,5 +1,11 @@
 # @jlacostaec/svgtosvelte
 
+## 1.1.5
+
+### Patch Changes
+
+- fix: better workaround for kit server-only modules + tests ([`cb6958c`](https://github.com/JLAcostaEC/svgtosvelte/commit/cb6958c4dd3a91495789a333e47614238dd411a4))
+
 ## 1.1.4
 
 ### Patch Changes
