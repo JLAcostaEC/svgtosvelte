@@ -1,0 +1,21 @@
+name: Feature Request
+description: Request a new feature in the library.
+labels: [feature_request]
+body:
+  - type: textarea
+    attributes:
+      label: Describe the feature
+      description: A clear and concise description of what your idea is. Include things like possible use cases, drawbacks, etc.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed solutions
+      description: A clear and concise description of what you would like to happen.
+  - type: textarea
+    attributes:
+      label: Relevant assets (Logs, Screenshots, etc) (Optional)
+      description: |
+        A list of assets relevant to this feature request.
+      validations:
+        required: false

@@ -1,0 +1,49 @@
+name: Bug Report
+description: Create a bug report
+labels: [bug]
+body:
+  - type: checkboxes
+    attributes:
+      label: Before open an issue, please confirm the following.
+      options:
+        - label: Have you updated your dependencies?
+          required: true
+        - label: Have you verified that your issue has not been reported previously?
+          required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Microsoft Edge (Stable/Beta/Dev/Canary)
+        - Firefox (Stable/Beta/Dev/Nightly)
+        - Chrome (Stable/Beta/Dev/Canary)
+        - Safari (Stable/Beta)
+        - All of them
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction
+      description: Steps to reproduce the bug. You can provide a live example, link to a repository, or a code snippet.
+      placeholder: |
+        1. Go to '....'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See the error
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed Solution (optional)
+      description: A clear and concise description of what you would like to happen.
+    validations:
+      required: false
