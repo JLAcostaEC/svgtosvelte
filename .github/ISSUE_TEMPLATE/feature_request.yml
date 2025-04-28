@@ -17,5 +17,3 @@ body:
       label: Relevant assets (Logs, Screenshots, etc) (Optional)
       description: |
         A list of assets relevant to this feature request.
-      validations:
-        required: false
