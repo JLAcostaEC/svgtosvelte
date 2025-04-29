@@ -8,6 +8,7 @@ export type Options = {
   casing: CasingFormat;
   useTypeScript?: boolean;
   updatefwh?: boolean;
+  destDir?: string;
   filter?: string[];
   exclude?: string[];
   registry?: boolean;
@@ -35,7 +36,7 @@ export function convertCasing(text: string, format: CasingFormat) {
     .replace(/([a-z])([A-Z])/g, '$1 $2') // Split camelCase/PascalCase text
     .replace(/([0-9])([a-zA-Z])/g, '$1 $2') // Split numbers from text
     .replace(/[^a-zA-Z0-9]+/g, ' ') // Replace non-alphanumeric characters with spaces
-    .trim() // Remove leading/trailing spaces
+    .trim()
     .toLowerCase()
     .split(/\s+/);
 
@@ -54,20 +55,18 @@ export function convertCasing(text: string, format: CasingFormat) {
 }
 
 export function getCleanName(input: string, glossary: string[]): string {
-  // Step 1: Remove glossary words (case insensitive)
+  // Remove glossary words (case insensitive)
   let result = glossary.reduce((result, word) => result.replace(word, ''), input);
 
-  // Step 2: Remove symbols (like hyphens, dots, etc.)
-  result = result.replace(/[^\w\s]|_/g, ' ');
-
-  // Step 3: Remove extra spaces
-  result = result.replace(/\s+/g, ' ').trim();
-
-  // Step 4: Remove the file extension
-  result = result.replace(/\.[a-zA-Z]+$/, '');
-
-  // Step 5: Capitalize the remaining text
+  // Remove symbols (like hyphens, dots, etc.)
   result = result
+    .replace(/[^\w\s]|_/g, ' ')
+    // Remove extra spaces
+    .replace(/\s+/g, ' ')
+    .trim()
+    // Remove the file extension
+    .replace(/\.[a-zA-Z]+$/, '')
+    // Capitalize the remaining text
     .split(' ')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize the first letter of each word
     .join(' ');

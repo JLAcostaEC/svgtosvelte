@@ -20,6 +20,7 @@ const VARIANTS: Options[] = [
     casing: 'PascalCase',
     prefix: 'icon',
     suffix: 'author',
+    destDir: 'src/lib',
     useTypeScript: true,
     updatefwh: true,
     filter: ['32'],
@@ -56,7 +57,7 @@ afterAll(() => {
 
 describe.each(VARIANTS)('SVGToSvelte ($casing - TS: $useTypeScript - Reg: $registry)', async (options) => {
   const EXTENSION = options.useTypeScript ? 'ts' : 'js';
-  const ROOT_OUTPUT = `test/${EXTENSION}/${options.casing.toLocaleLowerCase()}`;
+  const ROOT_OUTPUT = `test/${EXTENSION}/${options.casing.toLowerCase()}/${options.destDir || ''}`;
 
   convertSvgsToSvelte('test/icons', ROOT_OUTPUT, options);
 
@@ -64,32 +65,44 @@ describe.each(VARIANTS)('SVGToSvelte ($casing - TS: $useTypeScript - Reg: $regis
 
   const TO_ICON_FOLDER = options.kit;
 
-  const ICON_OUTPUT_PATH = TO_ICON_FOLDER ? `${ROOT_OUTPUT}/icon` : ROOT_OUTPUT;
-
   const FILES_COUNT = TEST_FILES.filter((item) => !options.filter?.some((f) => item.includes(f))).length;
 
-  // Include the index file and the registry file if it's enabled
+  // Include index.ts file (and the registry.json file if enabled)
   const TOTAL_FILES = FILES_COUNT + (options.registry ? 2 : 1);
 
   const mapFiles = (files: string[], path: string) => {
     return files.map((file) => ({
-      name: file.replace(file.slice(file.lastIndexOf('.')), ''),
+      name: file.split('.')[0],
       path: path + '/' + file,
       filename: file
     }));
   };
 
-  const OUTPUT_FILES = await fs.readdir(ICON_OUTPUT_PATH).then((files) => mapFiles(files, ICON_OUTPUT_PATH));
+  const OUTPUT_FILES: {
+    name: string;
+    path: string;
+    filename: string;
+  }[] = [];
 
   if (TO_ICON_FOLDER) {
-    const EXTRA_FILES = await fs.readdir(`${ROOT_OUTPUT}`).then((files) => {
+    OUTPUT_FILES.push(
+      ...(await fs.readdir(`${ROOT_OUTPUT}/icons`).then((files) => {
+        return mapFiles(
+          files.filter((item) => item.includes('.svelte')),
+          `${ROOT_OUTPUT}/icons`
+        );
+      }))
+    );
+  }
+
+  OUTPUT_FILES.push(
+    ...(await fs.readdir(ROOT_OUTPUT).then((files) => {
       return mapFiles(
-        files.filter((item) => !item.includes('icon')),
+        files.filter((item) => item.includes('.')),
         ROOT_OUTPUT
       );
-    });
-    OUTPUT_FILES.push(...EXTRA_FILES);
-  }
+    }))
+  );
 
   const COMPONENTS = OUTPUT_FILES.filter((file, index, arr) => {
     if (file.filename !== 'index.ts' && file.filename !== 'registry.json') {
@@ -100,6 +113,7 @@ describe.each(VARIANTS)('SVGToSvelte ($casing - TS: $useTypeScript - Reg: $regis
       return true;
     }
   });
+
   const REEXPORT = OUTPUT_FILES.find((file) => file.filename === 'index.ts');
   const REGISTRY = OUTPUT_FILES.find((file) => file.filename === 'registry.json');
 
@@ -129,7 +143,8 @@ describe.each(VARIANTS)('SVGToSvelte ($casing - TS: $useTypeScript - Reg: $regis
 
     let result =
       COMPONENTS.map(
-        (file) => `export { default as ${file.name} } from './${(TO_ICON_FOLDER ? 'icon/' : '') + file.filename}';`
+        (file) =>
+          `export { default as ${file.name} } from './${(file.name.toLowerCase().includes('server') && TO_ICON_FOLDER ? 'icons/' : '') + file.filename}';`
       ).join('\n') + '\n';
 
     if (REGISTRY) {

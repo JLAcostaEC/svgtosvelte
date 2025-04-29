@@ -33,11 +33,15 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
   const reexports: string[] = [];
   const registryData: Array<{ initialName: string; cleanName: string; componentName: string; fileDir: string }> = [];
 
-  const toIconsFolder = kit;
+  // Check if SvelteKit protection is needed
+  const kitProtection =
+    kit && destDir.replace(/\/+$/, '').endsWith('src/lib') && files.some((i) => i.toLowerCase().includes('server'));
 
-  if (toIconsFolder && !fs.existsSync(destDir + '/icon')) {
-    fs.mkdirSync(destDir + '/icon', { recursive: true });
+  // Create icons folder to prevent errors when using SvelteKit
+  if (kitProtection && !fs.existsSync(destDir + '/icons')) {
+    fs.mkdirSync(destDir + '/icons', { recursive: true });
   }
+
   files.forEach((file) => {
     const filePath = path.join(sourceDir, file);
     const svgContent = fs.readFileSync(filePath, 'utf8');
@@ -50,6 +54,9 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
       cleanName = getCleanName(baseName, exclude);
     }
 
+    // Identify problematic files
+    const protection = kitProtection && cleanName.toLowerCase().includes('server') ? 'icons/' : '';
+
     const fullName = prefix + ' ' + cleanName + ' ' + suffix;
 
     // Component name always need to be PascalCase
@@ -59,13 +66,13 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
 
     const svelteComponent = createComponentWithAst(svgContent, file, !!useTypeScript, !!updatefwh);
 
-    const svelteFilename = `${toIconsFolder ? 'icon/' : ''}${componentFileName}.svelte`;
-    const outputFilePath = path.join(destDir, svelteFilename);
+    const svelteFilename = `${componentFileName}.svelte`;
+    const outputFilePath = path.join(destDir, protection, svelteFilename);
 
     fs.writeFileSync(outputFilePath, svelteComponent, 'utf8');
     console.log(`Created component: ${outputFilePath}`);
 
-    reexports.push(`export { default as ${componentName} } from './${svelteFilename}';`);
+    reexports.push(`export { default as ${componentName} } from './${protection}${svelteFilename}';`);
 
     if (registry) {
       registryData.push({
