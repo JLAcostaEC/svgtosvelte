@@ -8,7 +8,6 @@ export type Options = {
   casing: CasingFormat;
   useTypeScript?: boolean;
   updatefwh?: boolean;
-  destDir?: string;
   filter?: string[];
   exclude?: string[];
   registry?: boolean;

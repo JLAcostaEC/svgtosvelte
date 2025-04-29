@@ -1,10 +1,14 @@
 import fs from 'node:fs/promises';
 import { describe, it, expect, afterAll } from 'vitest';
 import { convertSvgsToSvelte } from '../src/index.js';
-import { convertCasing, Options } from '../src/utils.js';
+import { convertCasing, type Options } from '../src/utils.js';
 import { execSync } from 'node:child_process';
 
-const VARIANTS: Options[] = [
+type TestOptions = Options & {
+  destDir?: string;
+};
+
+const VARIANTS: TestOptions[] = [
   // Right now we have ~128 possible combinations to test, I'll only test 4 😉
   {
     casing: 'camelCase',
