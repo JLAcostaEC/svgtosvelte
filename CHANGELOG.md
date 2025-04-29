@@ -1,5 +1,11 @@
 # @jlacostaec/svgtosvelte
 
+## 1.1.7
+
+### Patch Changes
+
+- fix: move only necessary icons when using the `-k` option ([`74611e8`](https://github.com/JLAcostaEC/svgtosvelte/commit/74611e8fed89cce0a6f209402de94521d2698d3f))
+
 ## 1.1.6
 
 ### Patch Changes
