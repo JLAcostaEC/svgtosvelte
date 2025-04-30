@@ -6,6 +6,12 @@ import { createComponentWithAst } from './create-component.js';
 export function convertSvgsToSvelte(sourceDir: string, destDir: string, options: Options) {
   const { prefix, suffix, casing, useTypeScript, updatefwh, attributes, filter, exclude, registry, kit } = options;
 
+  if (options.updatefwh) {
+    console.warn('Warning: The --updatefwh option is deprecated. Use --attributes instead.');
+    if (options.attributes && options.attributes.length > 0) {
+      console.warn('Warning: The --updatefwh option will override the --attributes option.');
+    }
+  }
   if (!fs.existsSync(sourceDir)) {
     console.error(`Source directory "${sourceDir}" does not exist.`);
     process.exit(1);

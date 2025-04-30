@@ -46,8 +46,12 @@ program
           console.log(output.toString());
         }
       } catch (e: unknown) {
-        // @ts-expect-error Yeah... `e` is unknown
-        console.log(e.stdout.toString());
+        if (e instanceof Error && 'stdout' in e) {
+          // @ts-expect-error Yeah... `e` is unknown
+          console.log(e.stdout.toString());
+        } else {
+          console.error('An unknown error occurred during svelte-check:', e);
+        }
       }
       console.log('SVG conversion completed successfully!');
     } catch (error) {
