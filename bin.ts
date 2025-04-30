@@ -16,7 +16,7 @@ program
   .option('-c, --casing <casing>', 'Set Casing to component names', 'PascalCase')
   .option('-t, --typescript', 'Use TypeScript in generated components', false)
   .option('-u, --updatefwh', 'Update Fill,Width and height (Deprecated, use -a instead.)', false)
-  .option('-a, --attributes [attributes...]', 'Update attributes on demand', [])
+  .option('-a, --attributes [attributes...]', 'Add/Override SVG attributes on demand', [])
   .option('-f, --filter [words...]', 'Filter icons with specific words out of selection', [])
   .option('-e, --exclude [words...]', 'Exclude specific words from the icon/component name', [])
   .option('-r, --registry', 'Create a JSON object detailing each component info', false)

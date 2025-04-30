@@ -44,7 +44,7 @@ svgtosvelte <source> [destination] [options]
 - `-s, --suffix <suffix>`: Add a suffix to component names (default: '').
 - `-c, --casing <casing>`: Set casing for component names (default: PascalCase).
 - `-t, --typescript`: Use TypeScript in generated components (default: false).
-- `-u, --updatefwh`: Update Fill to (currentColor), Width to (100%) and height to (auto) (default: false)
+- `-a, --attributes`: Add/Override SVG attributes on demand (default []).
 - `-f, --filter`: Filter icons with specific words out of selection (default: [])
 - `-e, --exclude`: Exclude specific words from the icon/component name (default: [])
 - `-r, --registry`: Create a JSON object detailing each component info (default: false)
@@ -88,7 +88,7 @@ convertSvgsToSvelte(source: string, outDir: string, options: Options): void
 - `option.suffix: string`: The name appended to the end of each component name.
 - `option.casing: string`: Convert all components name to the given casing. (PascalCase, camelCase, kebab-case, snake_case)
 - `option.useTypeScript: boolean`: Whether to use TS for file types or not.
-- `option.updatefwh: boolean`: Update Fill to (currentColor), Width to (100%) and height to (auto)
+- `option.attributes: string[]`: Add/Override SVG attributes on demand (default []).
 - `option.filter: string[]`: Filter icons with specific words out of selection (default: [])
 - `option.exclude: string[]`: Exclude specific words from the icon/component name (default: [])
 - `option.registry: boolean`: Create a JSON object detailing each component info (default: false)
