@@ -23,7 +23,6 @@ export function overrideAttributes(text: string, overrides: { attr: string; valu
   // eslint-disable-next-line prefer-const
   for (let { attr, value } of overrides) {
     let tags = ['svg'];
-    console.log("🚀 ~ overrideAttributes ~ attr:", attr)
     // If the attribute starts with *, it means it should be applied to all inner SVG elements
     if (attr.startsWith('*')) {
       tags = ['svg', 'path', 'circle', 'rect', 'g', 'line', 'polyline', 'polygon', 'ellipse'];
