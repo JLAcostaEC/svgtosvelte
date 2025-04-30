@@ -1,5 +1,11 @@
 # @jlacostaec/svgtosvelte
 
+## 1.2.0
+
+### Minor Changes
+
+- feat: new `-a` CLI option and deprecate `-u` ([#11](https://github.com/JLAcostaEC/svgtosvelte/pull/11))
+
 ## 1.1.7
 
 ### Patch Changes
