@@ -19,7 +19,6 @@ export type Options = {
 };
 
 export function overrideAttributes(text: string, overrides: { attr: string; value: string }[]) {
-  
   // eslint-disable-next-line prefer-const
   for (let { attr, value } of overrides) {
     let tags = ['svg'];
