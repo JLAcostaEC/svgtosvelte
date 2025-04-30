@@ -1,6 +1,6 @@
 import { parse } from 'svelte/compiler';
 import { walk } from 'estree-walker';
-import { parseAttribute, svelteJsTemplate, svelteTsTemplate } from './utils.js';
+import { parseAttribute, svelteJsTemplate, svelteTsTemplate, type Options, overrideAttributes } from './utils.js';
 
 const NodeTypes = [
   // Tags
@@ -11,7 +11,16 @@ const NodeTypes = [
   'Text'
 ];
 
-export function createComponentWithAst(source: string, filename: string, useTypeScript: boolean, updatefwh: boolean) {
+export function createComponentWithAst(
+  source: string,
+  filename: string,
+  useTypeScript: Options['useTypeScript'],
+  updatefwh: Options['updatefwh'],
+  attributes: {
+    attr: string;
+    value: string;
+  }[]
+) {
   const ast = parse(source, { filename, modern: true });
   let content = '';
 
@@ -31,7 +40,7 @@ export function createComponentWithAst(source: string, filename: string, useType
       }
 
       if (node.type === 'Attribute') {
-        content += parseAttribute(node, updatefwh);
+        content += updatefwh ? parseAttribute(node, updatefwh) : `${node.name}="${node.value[0].data}" `;
         return;
       }
 
@@ -60,6 +69,10 @@ export function createComponentWithAst(source: string, filename: string, useType
       }
     }
   });
+
+  if (attributes.length > 0) {
+    content = overrideAttributes(content, attributes);
+  }
 
   return `${useTypeScript ? svelteTsTemplate : svelteJsTemplate}${content}`;
 }

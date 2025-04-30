@@ -7,13 +7,115 @@ export type Options = {
   suffix?: string;
   casing: CasingFormat;
   useTypeScript?: boolean;
+  /**
+   * @deprecated Use -a (attributes) instead.
+   */
   updatefwh?: boolean;
+  attributes?: string[];
   filter?: string[];
   exclude?: string[];
   registry?: boolean;
   kit?: boolean;
 };
 
+export function overrideAttributes(text: string, overrides: { attr: string; value: string }[]) {
+  
+  // eslint-disable-next-line prefer-const
+  for (let { attr, value } of overrides) {
+    let tags = ['svg'];
+    console.log("🚀 ~ overrideAttributes ~ attr:", attr)
+    // If the attribute starts with *, it means it should be applied to all inner SVG elements
+    if (attr.startsWith('*')) {
+      tags = ['svg', 'path', 'circle', 'rect', 'g', 'line', 'polyline', 'polygon', 'ellipse'];
+      attr = attr.slice(1);
+    }
+
+    const attrRegex = new RegExp(`(<(${tags.join('|')})\\b[^>]*?)\\s?${attr}="[^"]*"`, 'gi');
+
+    // Replace if the attribute already exists
+    text = text.replace(attrRegex, `$1 ${attr}="${value}"`);
+
+    const tagRegex = new RegExp(`(<(${tags.join('|')})\\b(?![^>]*${attr}=))`, 'gi');
+
+    // Add the attribute if it doesn't exist
+    text = text.replace(tagRegex, `$1 ${attr}="${value}"`);
+  }
+
+  return text;
+}
+
+type Attributes = {
+  test: (file: string) => boolean;
+  attr: string;
+  value: string;
+};
+
+export function mapFilesAttributes(files: string[], attributes: string[]) {
+  if (attributes.length === 0) {
+    return files.map((file) => ({
+      file,
+      overrides: []
+    }));
+  }
+
+  const mappedAttributes: Attributes[] = [];
+
+  for (const raw of attributes) {
+    const parts = raw.split('.');
+
+    // Support attr.value (empty pattern) and pattern.attr.value
+    if (parts.length < 2 || parts.length > 3) continue;
+
+    let pattern = '';
+    let attr: string;
+    let value: string;
+
+    if (parts.length === 2) {
+      // ".attr.value" ⇒ apply to all files
+      [attr, value] = parts;
+    } else {
+      [pattern, attr, value] = parts;
+
+      // Check if the user accidentally did "^.attr.value"
+      if (pattern === '^') {
+        pattern = '';
+      }
+    }
+
+    let negate = false;
+
+    if (pattern.startsWith('^')) {
+      negate = true;
+      pattern = pattern.slice(1);
+    }
+
+    const test =
+      pattern === '' ? () => true : (file: string) => (negate ? !file.includes(pattern) : file.includes(pattern));
+
+    mappedAttributes.push({ test, attr, value });
+  }
+
+  const result: {
+    file: string;
+    overrides: { attr: string; value: string }[];
+  }[] = [];
+
+  for (const file of files) {
+    const applicable = mappedAttributes
+      .filter((o) => {
+        return o.test(file);
+      })
+      .map(({ attr, value }) => ({ attr, value }));
+
+    result.push({ file, overrides: applicable });
+  }
+
+  return result;
+}
+
+/**
+ * @deprecated Now just simply do `${attribute}="${value}" ` <- with an space at the end
+ */
 export function parseAttribute(
   attribute: AST.Attribute,
   /** Whether to update fill, width, and height attributes to make the SVG responsive and inherit the current color */
