@@ -27,6 +27,7 @@ const VARIANTS: TestOptions[] = [
     destDir: 'src/lib',
     useTypeScript: true,
     updatefwh: true,
+    attributes: ['server.fill.red', '^add.*stroke.blue', 'color.green'],
     filter: ['32'],
     exclude: ['24'],
     registry: true,

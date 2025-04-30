@@ -3,6 +3,7 @@
 import { program } from 'commander';
 import pkg from './package.json' with { type: 'json' };
 import { convertSvgsToSvelte } from './src/svg-to-svelte.js';
+import { execSync } from 'node:child_process';
 
 program
   .name(pkg.name)
@@ -14,7 +15,8 @@ program
   .option('-s, --suffix <suffix>', 'Add a suffix to component names', '')
   .option('-c, --casing <casing>', 'Set Casing to component names', 'PascalCase')
   .option('-t, --typescript', 'Use TypeScript in generated components', false)
-  .option('-u, --updatefwh', 'Update Fill to (currentColor), Width to (100%) and height to (auto)', false)
+  .option('-u, --updatefwh', 'Update Fill,Width and height (Deprecated, use -a instead.)', false)
+  .option('-a, --attributes [attributes...]', 'Add/Override SVG attributes on demand', [])
   .option('-f, --filter [words...]', 'Filter icons with specific words out of selection', [])
   .option('-e, --exclude [words...]', 'Exclude specific words from the icon/component name', [])
   .option('-r, --registry', 'Create a JSON object detailing each component info', false)
@@ -31,11 +33,26 @@ program
         casing: options.casing,
         useTypeScript: options.typescript,
         updatefwh: options.updatefwh,
+        attributes: options.attributes,
         filter: options.filter,
         exclude: options.exclude,
         registry: options.registry,
         kit: options.kit
       });
+      try {
+        const output = execSync(`pnpm svelte-check --workspace ${destination}`);
+        if (!output.toString().includes('svelte-check found 0 errors and 0 warnings')) {
+          console.error('Svelte check found errors or warnings:');
+          console.log(output.toString());
+        }
+      } catch (e: unknown) {
+        if (e instanceof Error && 'stdout' in e) {
+          // @ts-expect-error Yeah... `e` is unknown
+          console.log(e.stdout.toString());
+        } else {
+          console.error('An unknown error occurred during svelte-check:', e);
+        }
+      }
       console.log('SVG conversion completed successfully!');
     } catch (error) {
       console.error('Error during SVG conversion:', error);

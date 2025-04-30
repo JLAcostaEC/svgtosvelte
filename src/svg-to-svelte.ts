@@ -1,11 +1,17 @@
 import fs from 'fs';
 import path from 'path';
-import { convertCasing, getCleanName, type Options } from './utils.js';
+import { convertCasing, getCleanName, mapFilesAttributes, type Options } from './utils.js';
 import { createComponentWithAst } from './create-component.js';
 
 export function convertSvgsToSvelte(sourceDir: string, destDir: string, options: Options) {
-  const { prefix, suffix, casing, useTypeScript, updatefwh, filter, exclude, registry, kit } = options;
+  const { prefix, suffix, casing, useTypeScript, updatefwh, attributes, filter, exclude, registry, kit } = options;
 
+  if (options.updatefwh) {
+    console.warn('Warning: The --updatefwh option is deprecated. Use --attributes instead.');
+    if (options.attributes && options.attributes.length > 0) {
+      console.warn('Warning: The --updatefwh option will override the --attributes option.');
+    }
+  }
   if (!fs.existsSync(sourceDir)) {
     console.error(`Source directory "${sourceDir}" does not exist.`);
     process.exit(1);
@@ -15,7 +21,7 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
     fs.mkdirSync(destDir, { recursive: true });
   }
 
-  const files = fs.readdirSync(sourceDir).filter((file) => {
+  const rawFiles = fs.readdirSync(sourceDir).filter((file) => {
     const isSVG = path.extname(file) === '.svg';
 
     if (filter && filter.length > 0) {
@@ -25,7 +31,7 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
     return isSVG;
   });
 
-  if (files.length === 0) {
+  if (rawFiles.length === 0) {
     console.warn(`No SVG files found in "${sourceDir}".`);
     return;
   }
@@ -35,18 +41,21 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
 
   // Check if SvelteKit protection is needed
   const kitProtection =
-    kit && destDir.replace(/\/+$/, '').endsWith('src/lib') && files.some((i) => i.toLowerCase().includes('server'));
+    kit && destDir.replace(/\/+$/, '').endsWith('src/lib') && rawFiles.some((i) => i.toLowerCase().includes('server'));
 
   // Create icons folder to prevent errors when using SvelteKit
   if (kitProtection && !fs.existsSync(destDir + '/icons')) {
     fs.mkdirSync(destDir + '/icons', { recursive: true });
   }
 
+  const files = mapFilesAttributes(rawFiles, attributes || []);
+
   files.forEach((file) => {
-    const filePath = path.join(sourceDir, file);
+    const { file: fileName, overrides } = file;
+    const filePath = path.join(sourceDir, fileName);
     const svgContent = fs.readFileSync(filePath, 'utf8');
 
-    const baseName = path.basename(file, '.svg');
+    const baseName = path.basename(fileName, '.svg');
 
     let cleanName = baseName;
 
@@ -64,7 +73,7 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
 
     const componentFileName = convertCasing(fullName, casing);
 
-    const svelteComponent = createComponentWithAst(svgContent, file, !!useTypeScript, !!updatefwh);
+    const svelteComponent = createComponentWithAst(svgContent, fileName, !!useTypeScript, !!updatefwh, overrides);
 
     const svelteFilename = `${componentFileName}.svelte`;
     const outputFilePath = path.join(destDir, protection, svelteFilename);

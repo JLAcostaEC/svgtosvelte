@@ -62,5 +62,8 @@
     "svelte": "^5.16.1",
     "svelte-check": "^4.1.4"
   },
-  "packageManager": "pnpm@10.2.0"
+  "packageManager": "pnpm@10.2.0",
+  "engines": {
+    "node": ">=18"
+  }
 }
