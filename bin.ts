@@ -22,10 +22,13 @@ program
   .option('-r, --registry', 'Create a JSON object detailing each component info', false)
   .option(
     '-k, --kit',
-    'Tell the CLI that you’re using SvelteKit, which will prevent errors caused by using the word SERVER in src/lib',
+    '[DEPRECATED] Tell the CLI that you’re using SvelteKit, which will prevent errors caused by using the word SERVER in src/lib. This option will be removed in the next major release. See README for details.',
     false
   )
   .action((source, destination, options) => {
+    if (options.kit) {
+      console.warn('[DEPRECATION WARNING] The -k/--kit option is deprecated and will be removed in the next major release.\n  - Only use this if you are using SvelteKit and your icons are in src/lib.\n  - It is recommended to move icons from src/lib to another folder (e.g., src/icons).\n  - See README for manual export caveats and import paths.');
+    }
     try {
       convertSvgsToSvelte(source, destination, {
         prefix: options.prefix,

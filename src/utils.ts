@@ -15,6 +15,11 @@ export type Options = {
   filter?: string[];
   exclude?: string[];
   registry?: boolean;
+  /**
+   * @deprecated This option is deprecated and will be removed in the next major release.
+   * It is recommended to move icons from src/lib to another folder (e.g., src/icons).
+   * See README for manual export caveats and import paths.
+   */
   kit?: boolean;
 };
 
