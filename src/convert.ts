@@ -1,17 +1,13 @@
-import fs from 'fs';
-import path from 'path';
-import { convertCasing, getCleanName, mapFilesAttributes, type Options } from './utils.js';
-import { createComponentWithAst } from './create-component.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { convertCasing, getCleanName } from './casing.js';
+import { mapFilesAttributes } from './attributes.js';
+import { createComponent } from './component.js';
+import type { Options } from './types.js';
 
-export function convertSvgsToSvelte(sourceDir: string, destDir: string, options: Options) {
-  const { prefix, suffix, casing, useTypeScript, updatefwh, attributes, filter, exclude, registry, kit } = options;
+export function svgsToSvelte(sourceDir: string, destDir: string, options: Options): void {
+  const { prefix = '', suffix = '', casing, useTypeScript, attributes, filter, exclude, registry } = options;
 
-  if (options.updatefwh) {
-    console.warn('Warning: The --updatefwh option is deprecated. Use --attributes instead.');
-    if (options.attributes && options.attributes.length > 0) {
-      console.warn('Warning: The --updatefwh option will override the --attributes option.');
-    }
-  }
   if (!fs.existsSync(sourceDir)) {
     console.error(`Source directory "${sourceDir}" does not exist.`);
     process.exit(1);
@@ -39,15 +35,6 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
   const reexports: string[] = [];
   const registryData: Array<{ initialName: string; cleanName: string; componentName: string; fileDir: string }> = [];
 
-  // Check if SvelteKit protection is needed
-  const kitProtection =
-    kit && destDir.replace(/\/+$/, '').endsWith('src/lib') && rawFiles.some((i) => i.toLowerCase().includes('server'));
-
-  // Create icons folder to prevent errors when using SvelteKit
-  if (kitProtection && !fs.existsSync(destDir + '/icons')) {
-    fs.mkdirSync(destDir + '/icons', { recursive: true });
-  }
-
   const files = mapFilesAttributes(rawFiles, attributes || []);
 
   files.forEach((file) => {
@@ -63,25 +50,20 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
       cleanName = getCleanName(baseName, exclude);
     }
 
-    // Identify problematic files
-    const protection = kitProtection && cleanName.toLowerCase().includes('server') ? 'icons/' : '';
-
     const fullName = prefix + ' ' + cleanName + ' ' + suffix;
 
-    // Component name always need to be PascalCase
     const componentName = convertCasing(fullName, 'PascalCase');
-
     const componentFileName = convertCasing(fullName, casing);
 
-    const svelteComponent = createComponentWithAst(svgContent, fileName, !!useTypeScript, !!updatefwh, overrides);
+    const svelteComponent = createComponent(svgContent, !!useTypeScript, overrides);
 
     const svelteFilename = `${componentFileName}.svelte`;
-    const outputFilePath = path.join(destDir, protection, svelteFilename);
+    const outputFilePath = path.join(destDir, svelteFilename);
 
     fs.writeFileSync(outputFilePath, svelteComponent, 'utf8');
     console.log(`Created component: ${outputFilePath}`);
 
-    reexports.push(`export { default as ${componentName} } from './${protection}${svelteFilename}';`);
+    reexports.push(`export { default as ${componentName} } from './${svelteFilename}';`);
 
     if (registry) {
       registryData.push({
@@ -104,7 +86,7 @@ export function convertSvgsToSvelte(sourceDir: string, destDir: string, options:
   if (registry) {
     const registryDataPath = path.join(destDir, 'registry.json');
 
-    if (fs.existsSync(indexFilePath)) {
+    if (fs.existsSync(registryDataPath)) {
       const existingRegistryData = JSON.parse(fs.readFileSync(registryDataPath, 'utf8'));
       registryData.push(...existingRegistryData);
     }

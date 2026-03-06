@@ -2,7 +2,7 @@
 
 import { program } from 'commander';
 import pkg from './package.json' with { type: 'json' };
-import { convertSvgsToSvelte } from './src/svg-to-svelte.js';
+import { svgsToSvelte } from './src/convert.js';
 import { execSync } from 'node:child_process';
 
 program
@@ -15,29 +15,22 @@ program
   .option('-s, --suffix <suffix>', 'Add a suffix to component names', '')
   .option('-c, --casing <casing>', 'Set Casing to component names', 'PascalCase')
   .option('-t, --typescript', 'Use TypeScript in generated components', false)
-  .option('-u, --updatefwh', 'Update Fill,Width and height (Deprecated, use -a instead.)', false)
   .option('-a, --attributes [attributes...]', 'Add/Override SVG attributes on demand', [])
   .option('-f, --filter [words...]', 'Filter icons with specific words out of selection', [])
   .option('-e, --exclude [words...]', 'Exclude specific words from the icon/component name', [])
   .option('-r, --registry', 'Create a JSON object detailing each component info', false)
-  .option(
-    '-k, --kit',
-    'Tell the CLI that you’re using SvelteKit, which will prevent errors caused by using the word SERVER in src/lib',
-    false
-  )
+
   .action((source, destination, options) => {
     try {
-      convertSvgsToSvelte(source, destination, {
+      svgsToSvelte(source, destination, {
         prefix: options.prefix,
         suffix: options.suffix,
         casing: options.casing,
         useTypeScript: options.typescript,
-        updatefwh: options.updatefwh,
         attributes: options.attributes,
         filter: options.filter,
         exclude: options.exclude,
-        registry: options.registry,
-        kit: options.kit
+        registry: options.registry
       });
       try {
         const output = execSync(`pnpm svelte-check --workspace ${destination}`);

@@ -14,6 +14,6 @@
     "allowJs": true,
     "declaration": true
   },
-  "include": ["src/*", "bin.ts", "test/**/*.svelte"],
+  "include": ["src/**/*", "bin.ts", "test/**/*.svelte"],
   "exclude": ["node_modules"]
 }
