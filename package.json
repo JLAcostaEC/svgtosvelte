@@ -40,6 +40,9 @@
     "name": "Jorge Acosta",
     "url": "https://github.com/JLAcostaEC"
   },
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  },
   "license": "MIT",
   "devDependencies": {
     "@changesets/cli": "^2.28.0",
@@ -52,6 +55,7 @@
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
     "publint": "^0.3.2",
+    "svelte": "^5.53.7",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.23.0",
     "vitest": "^3.0.5"
