@@ -1,5 +1,11 @@
 # @jlacostaec/svgtosvelte
 
+## 2.0.0
+
+### Major Changes
+
+- feat!: complete rewrite of SVG to Svelte conversion for improved speed and simplicity ([#14](https://github.com/JLAcostaEC/svgtosvelte/pull/14))
+
 ## 1.2.0
 
 ### Minor Changes
