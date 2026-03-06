@@ -58,8 +58,6 @@
   },
   "dependencies": {
     "commander": "^13.0.0",
-    "estree-walker": "^3.0.3",
-    "svelte": "^5.16.1",
     "svelte-check": "^4.1.4"
   },
   "packageManager": "pnpm@10.2.0",

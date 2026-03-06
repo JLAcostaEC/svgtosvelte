@@ -1,6 +1,25 @@
 # SVG to Svelte
 
-`svgtosvelte` is the Best Way to Convert SVG to Svelte 5 Components
+The Best Way to Convert SVG to Svelte 5 Components
+
+## V2 — What's New?
+
+V2 is a complete rewrite focused on **speed** and **simplicity**. The SVG-to-Svelte conversion no longer parses an AST — it works directly on the SVG string, making it dramatically faster and removing heavy dependencies.
+
+### Performance Comparison
+
+| Metric           | V1 (AST-based)                        | V2 (String-based)                |
+| ---------------- | ------------------------------------- | -------------------------------- |
+| **Approach**     | Parse SVG → Walk AST → Rebuild string | Direct regex/string manipulation |
+| **Dependencies** | `svelte/compiler`, `estree-walker`    | None (zero runtime parsing deps) |
+| **1024 icons**   | ~3s                                   | ~0.5s                            |
+| **Per icon**     | ~2.9ms                                | ~0.49ms                          |
+| **Speedup**      | 1×                                    | **~6× faster**                   |
+
+### Breaking Changes
+
+- **`-k, --kit` option removed** — SvelteKit `src/lib/icons` folder protection is no longer needed.
+- **`-u, --updatefwh` option removed** — Use `-a` (attributes) instead: `-a fill.currentColor width.100% height.auto`.
 
 ## Table of Contents
 
@@ -8,6 +27,7 @@
 - [Usage](#usage)
 - [Options](#options)
 - [Examples](#examples)
+- [API](#api)
 - [License](#license)
 - [Contributing](#contributing)
 
@@ -44,13 +64,12 @@ svgtosvelte <source> [destination] [options]
 - `-s, --suffix <suffix>`: Add a suffix to component names (default: '').
 - `-c, --casing <casing>`: Set casing for component names (default: PascalCase).
 - `-t, --typescript`: Use TypeScript in generated components (default: false).
-- `-a, --attributes`: Add/Override SVG attributes on demand (default []).
-- `-f, --filter`: Filter icons with specific words out of selection (default: [])
-- `-e, --exclude`: Exclude specific words from the icon/component name (default: [])
-- `-r, --registry`: Create a JSON object detailing each component info (default: false)
-- `-k, --kit`: Tell the CLI that you’re using SvelteKit, which will prevent errors caused by using the word “server” in `src/lib` by moving all icons to `src/lib/icons` folder.
+- `-a, --attributes`: Add/Override SVG attributes on demand (default: []).
+- `-f, --filter`: Filter icons with specific words out of selection (default: []).
+- `-e, --exclude`: Exclude specific words from the icon/component name (default: []).
+- `-r, --registry`: Create a JSON object detailing each component info (default: false).
 
-## Examples:
+## Examples
 
 Convert SVG files in the icons directory to Svelte components in the src/lib directory:
 
@@ -70,14 +89,20 @@ Convert SVG files from a SVG Package to different output folder with camelCase n
 svgtosvelte node_modules/path-to-pkg/icons/ src/utils/icons -c camelCase -t
 ```
 
+Override fill to `currentColor` and make the SVG responsive (V1 `-u` equivalent):
+
+```sh
+svgtosvelte icons -a fill.currentColor width.100% height.auto
+```
+
 ## API
 
 You can also use the package programmatically:
 
 ```ts
-import { convertSvgsToSvelte } from '@jlacostaec/svgtosvelte';
+import { svgsToSvelte } from '@jlacostaec/svgtosvelte';
 
-convertSvgsToSvelte(source: string, outDir: string, options: Options): void
+svgsToSvelte(source: string, outDir: string, options: Options): void
 ```
 
 ### Parameters
@@ -88,27 +113,25 @@ convertSvgsToSvelte(source: string, outDir: string, options: Options): void
 - `option.suffix: string`: The name appended to the end of each component name.
 - `option.casing: string`: Convert all components name to the given casing. (PascalCase, camelCase, kebab-case, snake_case)
 - `option.useTypeScript: boolean`: Whether to use TS for file types or not.
-- `option.attributes: string[]`: Add/Override SVG attributes on demand (default []).
-- `option.filter: string[]`: Filter icons with specific words out of selection (default: [])
-- `option.exclude: string[]`: Exclude specific words from the icon/component name (default: [])
-- `option.registry: boolean`: Create a JSON object detailing each component info (default: false)
-- `option.kit: boolean`: Tell the CLI that you’re using SvelteKit, which will prevent errors caused by using the word “server” in `src/lib`.
+- `option.attributes: string[]`: Add/Override SVG attributes on demand (default: []).
+- `option.filter: string[]`: Filter icons with specific words out of selection (default: []).
+- `option.exclude: string[]`: Exclude specific words from the icon/component name (default: []).
+- `option.registry: boolean`: Create a JSON object detailing each component info (default: false).
 
 ### Example
 
-```javascript
-import { convertSvgsToSvelte } from '@jlacostaec/svgtosvelte';
+```typescript
+import { svgsToSvelte } from '@jlacostaec/svgtosvelte';
 
-convertSvgsToSvelte('src/path-to-svgs-folder/', 'src/lib/', {
+svgsToSvelte('src/path-to-svgs-folder/', 'src/lib/', {
   prefix: 'Svg2Svelte',
   suffix: 'byAuthor',
   casing: 'PascalCase',
   useTypeScript: true,
-  updatefwh: false,
+  attributes: ['fill.currentColor', 'width.100%', 'height.auto'],
   filter: [],
   exclude: ['2'],
-  registry: true,
-  kit: true
+  registry: true
 });
 ```
 
@@ -117,9 +140,6 @@ Output files
 
 -> src/lib/
     -------------------
-      /icons/
-        IconsWithTheWordSERVER.svelte
-
       Svg2SvelteAlertFillByAuthor.svelte
       ...RestOfIcons.svelte
       registry.json

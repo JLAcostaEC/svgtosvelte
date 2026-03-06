@@ -11,12 +11,6 @@ importers:
       commander:
         specifier: ^13.0.0
         version: 13.0.0
-      estree-walker:
-        specifier: ^3.0.3
-        version: 3.0.3
-      svelte:
-        specifier: ^5.16.1
-        version: 5.16.1
       svelte-check:
         specifier: ^4.1.4
         version: 4.1.4(svelte@5.16.1)(typescript@5.7.2)
@@ -1410,8 +1404,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zimmerframe@1.1.2:
-    resolution: {integrity: sha512-rAbqEGa8ovJy4pyBxZM70hg4pE6gDgaQ0Sl9M3enG3I0d6H4XSAM3GeNGLKnsBpuijUow064sf7ww1nutC5/3w==}
+  zimmerframe@1.1.4:
+    resolution: {integrity: sha512-B58NGBEoc8Y9MWWCQGl/gq9xBCe4IiKM0a2x7GZdQKOW5Exr8S1W24J6OgM1njK8xCRGvAJIL/MxXHf6SkmQKQ==}
 
 snapshots:
 
@@ -2592,7 +2586,7 @@ snapshots:
       is-reference: 3.0.3
       locate-character: 3.0.0
       magic-string: 0.30.17
-      zimmerframe: 1.1.2
+      zimmerframe: 1.1.4
 
   term-size@2.2.1: {}
 
@@ -2732,4 +2726,4 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zimmerframe@1.1.2: {}
+  zimmerframe@1.1.4: {}
