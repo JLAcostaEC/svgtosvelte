@@ -2,70 +2,80 @@
   "name": "@jlacostaec/svgtosvelte",
   "version": "2.0.0",
   "description": "The Best Way to Convert SVG to Svelte 5 Components",
+  "keywords": [
+    "CLI",
+    "convert",
+    "svelte",
+    "svg",
+    "svgtosvelte"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Jorge Acosta",
+    "url": "https://github.com/JLAcostaEC"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/JLAcostaEC/svgtosvelte"
+    "url": "git+https://github.com/JLAcostaEC/svgtosvelte.git"
   },
-  "main": "./dist/src/index.js",
-  "type": "module",
   "bin": {
     "svgtosvelte": "./dist/bin.js"
   },
-  "scripts": {
-    "dev": "tsc -w",
-    "build": "tsc && publint",
-    "test": "vitest run --test-timeout=10000",
-    "lint": "prettier --check . && eslint .",
-    "format": "prettier --write .",
-    "changeset:version": "changeset version && git add --all",
-    "changeset:publish": "changeset publish"
-  },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/src/index.js",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
       "default": "./dist/src/index.js"
     }
   },
-  "keywords": [
-    "svelte",
-    "svg",
-    "svgtosvelte",
-    "CLI",
-    "convert"
-  ],
-  "author": {
-    "name": "Jorge Acosta",
-    "url": "https://github.com/JLAcostaEC"
+  "publishConfig": {
+    "provenance": true
   },
-  "peerDependencies": {
-    "svelte": "^5.0.0"
-  },
-  "license": "MIT",
-  "devDependencies": {
-    "@changesets/cli": "^2.28.0",
-    "@eslint/compat": "^1.2.6",
-    "@eslint/js": "^9.19.0",
-    "@svitejs/changesets-changelog-github-compact": "^1.2.0",
-    "@types/node": "^22.10.4",
-    "eslint": "^9.19.0",
-    "eslint-config-prettier": "^10.0.1",
-    "globals": "^15.14.0",
-    "prettier": "^3.4.2",
-    "publint": "^0.3.2",
-    "svelte": "^5.53.7",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.23.0",
-    "vitest": "^3.0.5"
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown && publint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "bench": "vitest bench --run",
+    "lint": "oxlint && oxfmt --check .",
+    "format": "oxfmt --write .",
+    "changeset:version": "changeset version && git add --all",
+    "changeset:publish": "changeset publish"
   },
   "dependencies": {
-    "commander": "^13.0.0",
-    "svelte-check": "^4.1.4"
+    "commander": "^15.0.0"
   },
-  "packageManager": "pnpm@10.2.0",
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "@svitejs/changesets-changelog-github-compact": "^1.2.0",
+    "@types/node": "^25.9.2",
+    "oxfmt": "^0.54.0",
+    "oxlint": "^1.69.0",
+    "publint": "^0.3.21",
+    "svelte": "^5.56.3",
+    "svelte-check": "^4.6.0",
+    "tsdown": "^0.22.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "svelte-check": {
+      "optional": true
+    }
+  },
   "engines": {
-    "node": ">=18"
-  }
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@11.0.0"
 }

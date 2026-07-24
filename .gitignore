@@ -1,7 +1,12 @@
+node_modules
+
+# Testing
 test-results
 /test/js
 /test/ts
-node_modules
+/test/.tmp
+/test/.cli-tmp
+/test/.bench-tmp
 
 # Output
 .output
@@ -17,3 +22,6 @@ Thumbs.db
 .env.*
 !.env.example
 !.env.test
+
+# LLMS
+.claude

@@ -5,7 +5,7 @@ export const svelteTsTemplate = `<script lang="ts">
 `;
 
 export const svelteJsTemplate = `<script>
-  /** @type {import('svelte/elements').SVGAttributes<SVGElement>} */ 
+  /** @type {import('svelte/elements').SVGAttributes<SVGElement>} */
   let { children, ...attributes } = $props();
 </script>
 `;
