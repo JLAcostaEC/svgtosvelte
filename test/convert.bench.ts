@@ -9,7 +9,7 @@ const SVG = `<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w
 </svg>`;
 
 // Scale with BENCH_COUNT, e.g. `BENCH_COUNT=1000 pnpm bench`.
-const COUNT = Number(process.env.BENCH_COUNT) || 500;
+const COUNT = Number(process.env.BENCH_COUNT) || 512;
 const ROOT = "test/.bench-tmp";
 const SRC = `${ROOT}/src`;
 
