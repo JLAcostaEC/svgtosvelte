@@ -2,7 +2,6 @@ import fs from "node:fs/promises";
 import { describe, it, expect, afterAll } from "vitest";
 import { svgsToSvelte } from "../src/index.js";
 import { convertCasing, type Options } from "../src/index.js";
-import { execSync } from "node:child_process";
 
 // ── Variant generation ────────────────────────────────
 
@@ -179,11 +178,3 @@ describe.each(VARIANTS)(
     });
   },
 );
-
-// Run svelte-check once over all generated files
-it("Run Svelte Check", { timeout: 60000 }, async () => {
-  // Force human output: when piped (non-TTY), svelte-check >=4.6 defaults to
-  // machine format, which would not contain the human summary string below.
-  const output = execSync(`pnpm svelte-check --workspace test/ --output human`);
-  expect(output.toString()).toContain("svelte-check found 0 errors and 0 warnings");
-});

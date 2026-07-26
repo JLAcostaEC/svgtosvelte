@@ -57,9 +57,10 @@ describe("CLI", () => {
     const { stdout, status } = runCli(["--help"]);
     expect(status).toBe(0);
     expect(stdout).toContain("Usage:");
-    for (const flag of ["--prefix", "--casing", "--registry", "--check", "--dry-run", "--force"]) {
+    for (const flag of ["--prefix", "--casing", "--registry", "--dry-run", "--force"]) {
       expect(stdout).toContain(flag);
     }
+    expect(stdout).not.toContain("--check");
   });
 
   it("converts a directory and writes components + index", async () => {

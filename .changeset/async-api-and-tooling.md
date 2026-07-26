@@ -8,7 +8,7 @@ breaking: Async API, correctness fixes, and tooling migration.
 
 - `svgsToSvelte` is now async and returns a structured `Promise<ConvertResult>` (`components`, `skipped`, `indexPath`, `registryPath`). `await` it.
 - The library no longer writes to the console or calls `process.exit`; it throws on errors and accepts an optional `logger` (a ready-made `consoleLogger` is exported). The CLI passes `consoleLogger` and maps errors to a non-zero exit code.
-- `svelte-check` is no longer run automatically and is now an optional peer dependency. Opt in with the new `--check` flag.
+- `svelte-check` integration is removed. Conversions no longer run `svelte-check`, and the package no longer declares `svelte` or `svelte-check` as dependencies of any kind. Validate the generated components from your own project instead.
 
 **Fixes**
 
@@ -29,4 +29,4 @@ breaking: Async API, correctness fixes, and tooling migration.
 
 **New options**
 
-- `--check`, `--dry-run`, and `--force`.
+- `--dry-run` and `--force`.

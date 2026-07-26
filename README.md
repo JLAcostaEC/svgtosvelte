@@ -4,7 +4,7 @@ The Best Way to Convert SVG to Svelte 5 Components
 
 ## v3.0.0 — What's New
 
-- **New CLI flags:** `--check` (run `svelte-check` on the output), `--dry-run` (preview without writing any files), and `--force` (skip the "destination not empty" warning).
+- **New CLI flags:** `--dry-run` (preview without writing any files) and `--force` (skip the "destination not empty" warning).
 - **Safer output:** names that would be invalid JS identifiers are sanitized (`24-circle.svg` → `Icon24Circle`), name collisions are detected and reported instead of silently overwriting, and re-running is **idempotent** — the barrel `index` and `registry.json` are regenerated/merged (never duplicated) and sorted for stable diffs.
 - **Attribute values containing dots** are supported via `attr=value` (e.g. `-a opacity=0.5`).
 - **Parallel file I/O** with bounded concurrency.
@@ -12,18 +12,16 @@ The Best Way to Convert SVG to Svelte 5 Components
 ### Breaking changes
 
 - **`svgsToSvelte` is now async** and returns `Promise<ConvertResult>` — `await` it. The library no longer prints or calls `process.exit`; it **throws** on errors and accepts an optional `logger` (import `consoleLogger`, or pass your own). The CLI is unchanged.
-- **`svelte-check` no longer runs automatically** on every conversion — opt in with `--check`. It is now an optional peer dependency.
+- **`svelte-check` integration removed.** Conversions no longer run `svelte-check`, and the package no longer declares `svelte` or `svelte-check` as dependencies of any kind. Validating the generated components is now up to your project — add `svelte-check` yourself and run it as part of your own build if you want it.
 
 ### Performance
 
-Measured with `pnpm bench` (500 icons, Node 24 — results vary by machine):
+Measured with `pnpm bench` (512 icons, Node 24 — results vary by machine):
 
-| Stage                     | Time (500 icons) | Per icon |
+| Stage                     | Time (512 icons) | Per icon |
 | ------------------------- | ---------------- | -------- |
-| Transform only (dry-run)  | ~61 ms           | ~0.12 ms |
-| Full write (parallel I/O) | ~566 ms          | ~1.13 ms |
-
-File I/O dominates — the transform itself is ≈9× faster than writing the files — which is why writes run with bounded concurrency.
+| Transform only (dry-run)  | ~550 ms          | ~2 ms    |
+| Full write (parallel I/O) | ~5500 ms         | ~10 ms   |
 
 ## Table of Contents
 
@@ -72,7 +70,6 @@ svgtosvelte <source> [destination] [options]
 - `-f, --filter`: Filter icons with specific words out of selection (default: []).
 - `-e, --exclude`: Exclude specific words from the icon/component name (default: []).
 - `-r, --registry`: Create a JSON object detailing each component info (default: false).
-- `--check`: Run `svelte-check` on the generated components (default: false). Requires `svelte-check` to be installed (it is an **optional** peer dependency).
 - `--dry-run`: Compute the conversion and log what would happen **without writing any files** (default: false).
 - `--force`: Do not warn when the destination directory already contains files (default: false).
 
@@ -124,12 +121,6 @@ Use `=` for values that contain dots, and preview without writing:
 
 ```sh
 svgtosvelte icons -a opacity=0.5 "transform=scale(1.5)" --dry-run
-```
-
-Convert and validate the output with `svelte-check`:
-
-```sh
-svgtosvelte icons -t --check
 ```
 
 ## API
@@ -216,7 +207,6 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 ## Contact
 
 For any questions or feedback, please [contact me here](https://jorgelacosta.com).
-
 
 ## v2.0.0 - Changes if you are upgrading from v1
 

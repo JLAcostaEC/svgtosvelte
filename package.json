@@ -59,20 +59,9 @@
     "oxfmt": "^0.54.0",
     "oxlint": "^1.69.0",
     "publint": "^0.3.21",
-    "svelte": "^5.56.3",
-    "svelte-check": "^4.6.0",
     "tsdown": "^0.22.2",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"
-  },
-  "peerDependencies": {
-    "svelte": "^5.0.0",
-    "svelte-check": "^4.0.0"
-  },
-  "peerDependenciesMeta": {
-    "svelte-check": {
-      "optional": true
-    }
   },
   "engines": {
     "node": ">=22"
