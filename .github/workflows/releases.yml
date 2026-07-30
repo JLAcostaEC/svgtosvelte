@@ -16,29 +16,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 22.x
           cache: pnpm
 
       - name: Install
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm build && ["`git status --porcelain=v1`" == ""] || (echo "FALSE"; git diff --exit-code; exit 1)
+        run: pnpm build
+
+      - name: Ensure build leaves no tracked changes
+        run: git diff --exit-code
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         with:
           version: pnpm changeset:version

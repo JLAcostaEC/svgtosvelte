@@ -9,11 +9,10 @@
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "noImplicitAny": false,
-    "outDir": "dist",
     "allowJs": true,
-    "declaration": true
+    "types": ["node"],
+    "noEmit": true
   },
-  "include": ["src/**/*", "bin.ts", "test/**/*.svelte"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "bin.ts", "test/**/*.ts", "*.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }
