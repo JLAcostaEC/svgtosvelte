@@ -1,4 +1,4 @@
-import { SVG_OPEN_TAG } from "./regex.js";
+import { SVG_CLOSE_TAG, SVG_OPEN_TAG } from "./regex.js";
 import { svelteTsTemplate, svelteJsTemplate } from "./templates.js";
 import { overrideAttributes } from "./attributes.js";
 import type { AttributeOverride } from "./types.js";
@@ -18,16 +18,20 @@ export function createComponent(
     content = overrideAttributes(content, overrides);
   }
 
-  if (/<\/svg>/i.test(content)) {
-    // Normal `<svg>...</svg>`: add the spread to the opening tag and render
-    // children right before the closing tag.
-    content = content.replace(SVG_OPEN_TAG, "<svg$1 {...attributes}>");
+  // Both tags are emitted lowercase on purpose: Svelte reads a capitalized tag
+  // such as `<SVG>` as a component reference, not as an element.
+  const closingTags = [...content.matchAll(SVG_CLOSE_TAG)];
 
-    const lastClose = content.lastIndexOf("</svg>");
-    if (lastClose !== -1) {
-      content =
-        content.slice(0, lastClose) + " {@render children?.()}\n" + content.slice(lastClose);
-    }
+  if (closingTags.length > 0) {
+    // Normal `<svg>...</svg>`: render children right before the last closing
+    // tag first, so its offsets stay valid, then add the spread to the opening tag.
+    const lastClose = closingTags[closingTags.length - 1];
+    content =
+      content.slice(0, lastClose.index) +
+      " {@render children?.()}\n</svg>" +
+      content.slice(lastClose.index + lastClose[0].length);
+
+    content = content.replace(SVG_OPEN_TAG, "<svg$1 {...attributes}>");
   } else {
     // Self-closing `<svg ... />` (or otherwise unclosed): normalize it so the
     // spread and children slot are still applied.

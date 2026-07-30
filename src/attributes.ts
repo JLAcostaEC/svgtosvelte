@@ -29,12 +29,17 @@ export function overrideAttributes(text: string, overrides: AttributeOverride[])
     const safeAttr = escapeRegExp(attr);
     const safeValue = escapeReplacement(value);
 
-    // Replace existing attribute value.
-    const attrRegex = new RegExp(`(<(${tagsPattern})\\b[^>]*?)\\s?${safeAttr}="[^"]*"`, "gi");
+    // Replace an existing attribute value. The leading `\s` is required so the
+    // name matches as a whole: `fill` must not match `data-fill`. Both quote
+    // styles are accepted (SVG is XML, so the value is always quoted).
+    const attrRegex = new RegExp(
+      `(<(?:${tagsPattern})\\b[^>]*?)\\s${safeAttr}\\s*=\\s*(?:"[^"]*"|'[^']*')`,
+      "gi",
+    );
     text = text.replace(attrRegex, `$1 ${attr}="${safeValue}"`);
 
-    // Add attribute if it doesn't exist on the tag.
-    const tagRegex = new RegExp(`(<(${tagsPattern})\\b(?![^>]*${safeAttr}=))`, "gi");
+    // Add the attribute when the tag doesn't already carry it.
+    const tagRegex = new RegExp(`(<(?:${tagsPattern})\\b)(?![^>]*\\s${safeAttr}\\s*=)`, "gi");
     text = text.replace(tagRegex, `$1 ${attr}="${safeValue}"`);
   }
 

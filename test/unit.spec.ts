@@ -109,6 +109,25 @@ describe("overrideAttributes", () => {
     expect(out).toContain('<svg fill="red">');
     expect(out).toContain('<path fill="red"');
   });
+
+  it("matches whole attribute names only, leaving data-fill untouched", () => {
+    const out = overrideAttributes('<svg data-fill="red"></svg>', [
+      { attr: "fill", value: "blue" },
+    ]);
+    expect(out).toBe('<svg fill="blue" data-fill="red"></svg>');
+  });
+
+  it("does not confuse fill with fill-opacity", () => {
+    const out = overrideAttributes('<svg fill-opacity="0.5"></svg>', [
+      { attr: "fill", value: "blue" },
+    ]);
+    expect(out).toBe('<svg fill="blue" fill-opacity="0.5"></svg>');
+  });
+
+  it("replaces single-quoted attribute values", () => {
+    const out = overrideAttributes(`<svg fill='red'></svg>`, [{ attr: "fill", value: "blue" }]);
+    expect(out).toBe('<svg fill="blue"></svg>');
+  });
 });
 
 // ── mapFilesAttributes ─────────────────────────────────
@@ -159,6 +178,20 @@ describe("createComponent", () => {
     expect(out).toContain("{@render children?.()}");
     expect(out).toContain("</svg>");
     expect(out).not.toMatch(/\/\s*\{\.\.\.attributes\}/);
+  });
+
+  it("normalizes an uppercase <SVG> pair to matching lowercase tags", () => {
+    const out = createComponent("<SVG><path /></SVG>", true, []);
+    expect(out).toContain("<svg {...attributes}>");
+    expect(out).toContain("{@render children?.()}");
+    expect(out).toContain("</svg>");
+    expect(out).not.toContain("</SVG>");
+  });
+
+  it("handles a closing tag with trailing whitespace without duplicating it", () => {
+    const out = createComponent("<svg></svg >", true, []);
+    expect(out).toContain("{@render children?.()}");
+    expect(out.match(/<\/svg\s*>/gi)).toHaveLength(1);
   });
 
   it("uses the TS template vs the JS template", () => {
