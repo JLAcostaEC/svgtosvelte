@@ -11,8 +11,8 @@ The Best Way to Convert SVG to Svelte 5 Components
 
 ### Breaking changes
 
-- **`svgsToSvelte` is now async** and returns `Promise<ConvertResult>` — `await` it. The library no longer prints or calls `process.exit`; it **throws** on errors and accepts an optional `logger` (import `consoleLogger`, or pass your own). The CLI is unchanged.
-- **`svelte-check` integration removed.** Conversions no longer run `svelte-check`, and the package no longer declares `svelte` or `svelte-check` as dependencies of any kind. Validating the generated components is now up to your project — add `svelte-check` yourself and run it as part of your own build if you want it.
+- **`svgsToSvelte` is now async** and returns `Promise<ConvertResult>` — `await` it. The library no longer prints or calls `process.exit`; it **throws** on errors and accepts an optional `logger` (import `consoleLogger`, or pass your own).
+- **`svelte-check` integration removed.** The `--check` CLI flag is gone, conversions no longer run `svelte-check`, and the package no longer declares `svelte` or `svelte-check` as dependencies of any kind. Validating the generated components is now up to your project — add `svelte-check` yourself and run it as part of your own build if you want it.
 
 ### Performance
 
@@ -154,7 +154,7 @@ svgsToSvelte(source: string, outDir: string, options: Options, logger?: Logger):
 ```ts
 type ConvertResult = {
   components: Array<{ source: string; componentName: string; outputPath: string }>;
-  skipped: Array<{ source: string; reason: "filtered" | "collision" | "invalid-name" }>;
+  skipped: Array<{ source: string; reason: "filtered" | "collision" }>;
   indexPath: string;
   registryPath?: string;
 };
