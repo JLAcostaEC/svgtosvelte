@@ -41,7 +41,7 @@ export type RegistryEntry = {
 };
 
 /** Why a source SVG did not produce a component. */
-export type SkipReason = "filtered" | "collision" | "invalid-name";
+export type SkipReason = "filtered" | "collision";
 
 /** Structured result returned by {@link svgsToSvelte}, for programmatic use. */
 export type ConvertResult = {
