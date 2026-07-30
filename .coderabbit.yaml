@@ -1,0 +1,202 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+tone_instructions: >-
+  Be direct and technical. Prioritize correctness, public API stability and Node/ESM
+  compatibility over style nits. Do not comment on formatting: oxfmt owns it.
+early_access: false
+
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  review_status: true
+  commit_status: true
+  fail_commit_status: false
+  collapse_walkthrough: true
+  changed_files_summary: true
+  sequence_diagrams: true
+  estimate_code_review_effort: true
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+  suggested_labels: true
+  auto_apply_labels: false
+  suggested_reviewers: false
+  poem: false
+  abort_on_close: true
+
+  # Generated / vendored / fixture files are not worth reviewing.
+  path_filters:
+    - "!dist/**"
+    - "!pnpm-lock.yaml"
+    - "!CHANGELOG.md"
+    - "!LICENSE.md"
+    - "!test/icons/**"
+    - "!test/js/**"
+    - "!test/ts/**"
+
+  path_instructions:
+    - path: "**/*.ts"
+      instructions: >-
+        TypeScript, ESM-only, Node >= 22. Flag: missing `node:` prefix on builtin imports;
+        `any` without justification (oxlint warns on it); value imports of types instead of
+        `import type`; new sync `fs` calls (the API is async since v3) and unawaited promises.
+        Do not comment on formatting, quotes, semicolons or line width: `oxfmt` (printWidth 100,
+        double quotes, trailing commas) is enforced in CI by `pnpm lint`.
+    - path: "src/**/*.ts"
+      instructions: >-
+        Library core. Relative imports MUST keep the explicit `.js` extension (ESM resolution),
+        e.g. `./convert.js`. Anything newly exported has to be re-exported from `src/index.ts`,
+        and types from `src/types.ts` only. The package declares `sideEffects: false`, so reject
+        top-level side effects. Pay extra attention to: regex changes in `src/regex.ts` (catastrophic
+        backtracking / ReDoS on untrusted SVG input, and correctness on multiline or
+        attribute-heavy SVGs), file writes escaping the output directory (path traversal via
+        crafted file names), unsanitized user input landing in generated Svelte components,
+        and any change in signature or behavior of an exported symbol, which is a breaking change
+        and needs a major changeset.
+    - path: "bin.ts"
+      instructions: >-
+        Commander CLI entrypoint. Check that every added/renamed/removed option is reflected in
+        `README.md`, that failures exit with a non-zero code instead of throwing raw stack traces,
+        that user-facing output goes through the `Logger` abstraction (`src/logger.ts`) instead of
+        bare `console`, and that removing or renaming a flag is called out as breaking.
+    - path: "test/**/*.ts"
+      instructions: >-
+        Vitest suites. Require deterministic tests: no `.only`, no network access, no reliance on
+        wall-clock or filesystem ordering. Temp output must stay inside the gitignored dirs
+        (`test/.tmp`, `test/.cli-tmp`, `test/.bench-tmp`, `test/js`, `test/ts`) and be cleaned up.
+        New behavior in `src/` or `bin.ts` should come with a covering test; bug fixes should come
+        with a regression test.
+    - path: ".changeset/*.md"
+      instructions: >-
+        Verify the bump level matches the diff: `patch` for fixes, `minor` for additive API/CLI
+        surface, `major` for any change to an exported signature, a CLI flag or generated output
+        shape. The summary must be a user-facing sentence, not an internal note.
+    - path: ".github/workflows/*.yml"
+      instructions: >-
+        Keep `permissions` least-privilege, pin actions to a major tag or SHA, keep the Node matrix
+        aligned with `engines.node` (>= 22) in `package.json`, and never expose secrets to
+        `pull_request`-triggered jobs.
+    - path: "package.json"
+      instructions: >-
+        Watch for regressions in the published surface: `exports`/`main`/`types` must keep pointing
+        at real build output, `files` must include everything needed at install time, `bin` must
+        match the tsdown output path, and runtime deps must stay minimal (only `commander` today).
+        Bumping `engines.node` or moving a dep between `dependencies` and `devDependencies` is a
+        breaking/consumer-visible change.
+    - path: "README.md"
+      instructions: >-
+        Documented CLI flags, API signatures and examples must match the current code. Flag stale
+        options and copy-pasteable snippets that would not run.
+
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+    base_branches:
+      - main
+      - dev
+    ignore_title_keywords:
+      - wip
+      - "do not review"
+      - "Version Packages"
+
+  finishing_touches:
+    docstrings:
+      enabled: true
+    unit_tests:
+      enabled: true
+
+  pre_merge_checks:
+    title:
+      mode: warning
+      requirements: >-
+        The title must start with one of `feat:`, `fix:`, `chore:`, `docs:`, `test:`, `refactor:`,
+        `perf:` or `breaking:` followed by a concise, imperative description of the change.
+        Reject vague titles like "updates" or "fixes". Exempt release PRs titled
+        "Version Packages".
+    description:
+      mode: warning
+    docstrings:
+      mode: "off"
+    issue_assessment:
+      mode: warning
+    custom_checks:
+      - name: Changeset present
+        mode: warning
+        instructions: >-
+          If the PR touches `src/**`, `bin.ts` or the published fields of `package.json`, it must
+          add a changeset file under `.changeset/`. Pass the check when the PR only touches tests,
+          docs, CI, tooling config or lockfiles, and when it is a changesets release PR
+          ("Version Packages").
+      - name: Public API and docs in sync
+        mode: warning
+        instructions: >-
+          If an exported symbol in `src/index.ts` or a CLI flag in `bin.ts` was added, renamed or
+          removed, `README.md` must be updated in the same PR and the changeset must use the
+          matching bump level (major for removals/renames).
+
+  tools:
+    # This repo lints with oxlint (`.oxlintrc.json`) and formats with oxfmt.
+    oxc:
+      enabled: true
+    eslint:
+      enabled: false
+    biome:
+      enabled: false
+    github-checks:
+      enabled: true
+    gitleaks:
+      enabled: true
+    osvScanner:
+      enabled: true
+    semgrep:
+      enabled: true
+    actionlint:
+      enabled: true
+    yamllint:
+      enabled: true
+    markdownlint:
+      enabled: true
+    languagetool:
+      enabled: true
+      level: default
+
+chat:
+  auto_reply: true
+  art: false
+
+knowledge_base:
+  opt_out: false
+  web_search:
+    enabled: true
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "**/CLAUDE.md"
+      - "**/AGENTS.md"
+      - ".github/copilot-instructions.md"
+  learnings:
+    scope: local
+  issues:
+    scope: local
+  pull_requests:
+    scope: local
+
+code_generation:
+  docstrings:
+    language: en-US
+    path_instructions:
+      - path: "src/**/*.ts"
+        instructions: >-
+          Use TSDoc. Document exported functions with a one-line summary, `@param` for each
+          parameter, `@returns`, and `@throws` when the function can reject. Keep it terse and
+          skip restating types already visible in the signature.
+  unit_tests:
+    path_instructions:
+      - path: "src/**/*.ts"
+        instructions: >-
+          Write Vitest suites (`describe`/`it`/`expect`) matching the layout of `test/unit.spec.ts`.
+          Import from the source module directly, keep any filesystem work inside `test/.tmp` and
+          clean it up in `afterEach`. Cover edge cases: empty SVG, malformed markup, duplicate file
+          names and casing collisions.
