@@ -1,6 +1,6 @@
 {
   "name": "@jlacostaec/svgtosvelte",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "The Best Way to Convert SVG to Svelte 5 Components",
   "keywords": [
     "CLI",
